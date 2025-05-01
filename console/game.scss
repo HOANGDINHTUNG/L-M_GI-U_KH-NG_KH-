@@ -1,0 +1,482 @@
+body {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url(../image/image-game/bg.jpg);
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+  font-family: 'Poppins', sans-serif;
+  overflow: hidden;
+}
+
+.table {
+  margin-top: 100px;
+  position: relative;
+}
+
+.table img {
+  width: 700px;
+  object-fit: contain;
+}
+
+/* Các nút chức năng */
+.btn-delete {
+  position: absolute;
+  top: -160px;
+  right: 110px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.btn-cup {
+  position: absolute;
+  top: -80px;
+  right: 40px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.btn-chat {
+  position: absolute;
+  top: 20px;
+  right: 40px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.btn-hand-delete {
+  position: absolute;
+  top: 100px;
+  right: 90px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.btn-dor {
+  position: absolute;
+  top: -155px;
+  left: 50px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.btn-rank {
+  position: absolute;
+  top: -80px;
+  left: -20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.btn-question {
+  position: absolute;
+  top: 20px;
+  left: -30px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.btn-note {
+  position: absolute;
+  top: 100px;
+  left: 20px;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+/* Hiệu ứng khi hover các nút */
+.btn-delete:hover,
+.btn-cup:hover,
+.btn-chat:hover,
+.btn-hand-delete:hover,
+.btn-dor:hover,
+.btn-rank:hover,
+.btn-question:hover,
+.btn-note:hover {
+  transform: scale(1.1);
+}
+
+.btn-delete img,
+.btn-cup img,
+.btn-chat img,
+.btn-hand-delete img,
+.btn-dor img,
+.btn-rank img,
+.btn-question img,
+.btn-note img {
+  width: 60px;
+  filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.5));
+}
+
+/* Bát và đĩa */
+.el-bowl img {
+  width: 200px;
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.el-plate img {
+  width: 200px;
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.5));
+}
+
+/* Phần tài xỉu */
+.el-even {
+  position: absolute;
+  bottom: 130px;
+  left: 60px;
+}
+
+.el-odd {
+  position: absolute;
+  bottom: 130px;
+  right: 200px;
+}
+
+.el-even img,
+.el-odd img {
+  width: 140px;
+  transition: transform 0.3s ease;
+}
+
+.el-even:hover img,
+.el-odd:hover img {
+  transform: scale(1.05);
+}
+
+/* Phần đặt cược */
+.el-bet-money-right {
+  position: absolute;
+  bottom: -20px;
+  right: 220px;
+  cursor: pointer;
+}
+
+.el-bet-money-left {
+  position: absolute;
+  bottom: -20px;
+  left: 80px;
+  cursor: pointer;
+}
+
+.el-bet-money-right img,
+.el-bet-money-left img {
+  width: 140px;
+  transition: transform 0.2s ease;
+}
+
+.el-bet-money-right:hover img,
+.el-bet-money-left:hover img {
+  transform: scale(1.05);
+}
+
+.el-bet-main-right {
+  position: absolute;
+  top: 80px;
+  right: 90px;
+}
+
+.el-bet-main-left {
+  position: absolute;
+  top: 80px;
+  left: 100px;
+}
+
+.el-bet-main-right span,
+.el-bet-main-left span {
+  font-size: 18px;
+  font-weight: 900;
+  color: rgb(255, 183, 0);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+.el-bet-money-left span,
+.el-bet-money-right span {
+  position: absolute;
+  top: 5px;
+  left: 10px;
+  font-size: 18px;
+  font-weight: 900;
+  color: rgb(255, 183, 0);
+  text-shadow: 0 0 5px rgba(0, 0, 0, 0.8);
+}
+
+/* Container chọn mức cược */
+.container-bet {
+  cursor: pointer;
+  visibility: hidden;
+  margin-top: 160px;
+  background-color: rgba(0, 0, 0, 0.7);
+  padding: 15px;
+  border-radius: 10px;
+  box-shadow: 0 0 20px rgba(255, 223, 0, 0.3);
+}
+
+.container-bet [class^="k-"],
+.container-bet [class^="m-"] {
+  position: relative;
+  margin: 0 5px;
+  transition: transform 0.2s ease;
+}
+
+.container-bet [class^="k-"]:hover,
+.container-bet [class^="m-"]:hover {
+  transform: scale(1.1);
+}
+
+.container-bet [class^="k-"] img,
+.container-bet [class^="m-"] img {
+  width: 70px;
+}
+
+.container-bet [class^="k-"] span,
+.container-bet [class^="m-"] span {
+  position: absolute;
+  bottom: 8px;
+  font-size: 20px;
+  font-weight: 900;
+  color: rgb(244, 202, 31);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  width: 100%;
+  text-align: center;
+  left: 0;
+}
+
+.btn-x2 img,
+.btn-cancel img {
+  width: 200px;
+  transition: transform 0.2s ease;
+}
+
+.btn-bet img {
+  width: 250px;
+  transition: transform 0.2s ease;
+}
+
+.btn-x2:hover img,
+.btn-bet:hover img,
+.btn-cancel:hover img {
+  transform: scale(1.05);
+}
+
+/* Container hiển thị tiền hiện tại */
+.container-current-money {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+}
+
+.current-money {
+  position: relative;
+}
+
+.current-money img {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 230px;
+}
+
+.current-money .username {
+  position: absolute;
+  left: 80px;
+  bottom: 40px;
+  font-size: 20px;
+  font-weight: 900;
+  color: rgb(244, 202, 31);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+.current-money .money {
+  z-index: 1;
+  position: absolute;
+  left: 100px;
+  bottom: 10px;
+  font-size: 16px;
+  font-weight: 500;
+  color: rgb(242, 225, 159);
+  text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+}
+
+/* Đồng hồ đếm ngược */
+.countdown-timer {
+  font-size: 6rem;
+  font-weight: 700;
+  color: #ffe100;
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  font-family: "Poppins", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  animation: pulse 1.5s infinite;
+  border: none;
+  text-shadow: 0 0 15px rgba(255, 225, 0, 0.8);
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.05);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+.countdown-timer.time-end {
+  color: #ff0000;
+  animation: danger-pulse 0.8s infinite;
+}
+
+@keyframes danger-pulse {
+  0% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+/* Phần hiển thị xúc xắc */
+.dice-box {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 250px;
+  height: 150px;
+  border: none;
+  margin: 20px auto;
+  background-color: transparent;
+  overflow: visible;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  z-index: 10;
+}
+
+/* Hiển thị các xúc xắc */
+.dice-img {
+  width: 40px;
+  height: 40px;
+  margin: 5px;
+  transition: all 0.3s ease;
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.8));
+}
+
+.static-dice {
+  position: relative;
+  display: inline-block;
+  margin: 4px;
+  transition: transform 0.3s ease;
+}
+
+.static-dice:hover {
+  transform: scale(1.2) rotate(10deg);
+}
+
+.shaking {
+  position: absolute;
+  animation: shake 0.1s infinite alternate;
+}
+
+.final {
+  position: absolute;
+  animation: reveal 0.5s ease-out;
+}
+
+@keyframes shake {
+  0% { transform: rotate(-5deg) translate(-2px, -2px); }
+  100% { transform: rotate(5deg) translate(2px, 2px); }
+}
+
+@keyframes reveal {
+  0% { transform: scale(0.5) rotate(0deg); opacity: 0; }
+  100% { transform: scale(1) rotate(360deg); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* Hiển thị kết quả Tài/Xỉu */
+.dice-result {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.8);
+  padding: 15px 25px;
+  border-radius: 15px;
+  text-align: center;
+  animation: fadeIn 0.5s;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
+  z-index: 200;
+}
+
+.result-tai {
+  color: #FF5722;
+  text-shadow: 0 0 10px rgba(255, 87, 34, 0.7);
+}
+
+.result-xiu {
+  color: #4CAF50;
+  text-shadow: 0 0 10px rgba(76, 175, 80, 0.7);
+}
+
+.dice-result h2 {
+  font-size: 3rem;
+  font-weight: 900;
+  margin-bottom: 10px;
+  letter-spacing: 2px;
+}
+
+.dice-result p {
+  font-size: 1.5rem;
+  margin: 5px 0;
+}
+
+/* Nút Test Xúc Xắc */
+.quick-roll-button {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  padding: 12px 20px;
+  background: linear-gradient(145deg, #ff9800, #f57c00);
+  color: white;
+  border: none;
+  border-radius: 50px;
+  font-weight: bold;
+  font-size: 16px;
+  cursor: pointer;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  z-index: 1000;
+  font-family: 'Poppins', sans-serif;
+}
+
+.quick-roll-button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.4);
+  background: linear-gradient(145deg, #ffb74d, #ff9800);
+}
