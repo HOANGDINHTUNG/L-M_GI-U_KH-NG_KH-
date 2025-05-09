@@ -196,6 +196,55 @@ const diceImages = [
   "../image/image-game/dor6.png",
 ];
 
+// Thêm style vào head để định nghĩa các animation
+function addGameAnimationStyles() {
+  const styleElement = document.createElement("style");
+  styleElement.textContent = `
+    @keyframes pulse-grow {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+    
+    @keyframes sparkle {
+      0% { box-shadow: 0 0 5px 0px gold; }
+      50% { box-shadow: 0 0 20px 5px gold, 0 0 30px 10px rgba(255, 215, 0, 0.5); }
+      100% { box-shadow: 0 0 5px 0px gold; }
+    }
+    
+    .winner-effect {
+      animation: pulse-grow 1s infinite, sparkle 1.5s infinite;
+      z-index: 100;
+    }
+    
+    .winner-even::after, .winner-odd::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: radial-gradient(circle, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0) 70%);
+      z-index: 90;
+      pointer-events: none;
+      opacity: 0;
+      animation: shine 2s infinite;
+    }
+    
+    @keyframes shine {
+      0% { opacity: 0; }
+      50% { opacity: 0.7; }
+      100% { opacity: 0; }
+    }
+  `;
+  document.head.appendChild(styleElement);
+}
+
+// Gọi hàm khi trang tải xong
+document.addEventListener("DOMContentLoaded", () => {
+  addGameAnimationStyles();
+});
+
 // Hiển thị tất cả xúc xắc trong diceBox khi trang tải lên
 function displayAllDice() {
   // Xóa nội dung cũ nếu có
@@ -336,7 +385,7 @@ function showDice() {
 
   // Thiết lập kích thước và vị trí box chứa xúc xắc
   diceBox.style.position = "absolute";
-  diceBox.style.width = "250px";
+  diceBox.style.width = "200px";
   diceBox.style.height = "150px";
   diceBox.style.border = "1px solid transparent";
   diceBox.style.overflow = "visible";
@@ -347,7 +396,7 @@ function showDice() {
   let shakeCount = 0;
 
   // Kích thước xúc xắc
-  const diceSize = 60;
+  const diceSize = 70;
 
   // Mảng lưu trữ vị trí xúc xắc để tránh chồng lấp
   const dicePositions = [];
@@ -361,7 +410,7 @@ function showDice() {
       diceSize,
       parseInt(diceBox.style.width),
       parseInt(diceBox.style.height),
-      15 // Khoảng cách an toàn giữa các x  úc xắc
+      20 // Khoảng cách an toàn giữa các xúc xắc
     );
 
     // Lưu vị trí để kiểm tra cho xúc xắc tiếp theo
@@ -400,6 +449,9 @@ function showDice() {
       diceImg.className = "dice-img shaking";
       diceImg.style.width = "100%";
       diceImg.style.height = "100%";
+      diceImg.style.background = "transparent";
+      diceImg.style.border = "none";
+      diceImg.style.borderRadius = "0"; // tránh bo góc tạo viền trắng
 
       // Thêm hiệu ứng di chuyển ngẫu nhiên trong quá trình lắc
       if (shakeCount < shakeTimes - 1) {
@@ -429,9 +481,9 @@ function showDice() {
   }, shakeDuration / shakeTimes);
 }
 
-// Hiển thị kết quả xúc xắc cuối cùng - Cải tiến
+// Sửa đổi hàm showFinalDiceResults để thêm hiệu ứng
 function showFinalDiceResults(diceResults, diceContainers) {
-  // Xóa xúc xắc cũ và hiển thị kết quả cuối cùng
+  // Xóa xúc xắc cũ
   diceContainers.forEach((container, index) => {
     container.innerHTML = "";
 
@@ -441,9 +493,12 @@ function showFinalDiceResults(diceResults, diceContainers) {
     diceImg.className = "dice-img final";
     diceImg.style.width = "100%";
     diceImg.style.height = "100%";
+    diceImg.style.background = "transparent";
+    diceImg.style.border = "none";
+    diceImg.style.borderRadius = "0"; // tránh bo góc tạo viền trắng
 
     // Thêm hiệu ứng xoay riêng biệt cho từng xúc xắc
-    const rotation = (index - 1) * 45; // -15, 0, 15 độ
+    const rotation = (index - 1) * 15; // -15, 0, 15 độ
     diceImg.style.transform = `rotate(${rotation}deg)`;
 
     container.appendChild(diceImg);
@@ -453,39 +508,115 @@ function showFinalDiceResults(diceResults, diceContainers) {
   const totalPoints = diceResults.reduce((sum, value) => sum + value, 0);
 
   // Xác định kết quả Tài (lớn) hay Xỉu (nhỏ)
-  const result = totalPoints >= 11 ? "Tài" : "Xỉu";
+  let result;
+  if (totalPoints == 18 || totalPoints == 3) {
+    result = "Bộ ba"; // 3 con giống nhau → Tài/Xỉu thua
+  } else if (totalPoints >= 11 && totalPoints <= 17) {
+    result = "Xỉu";
+  } else if (totalPoints >= 4 && totalPoints <= 10) {
+    result = "Tài";
+  }
 
   // Hiển thị kết quả với hiệu ứng đẹp mắt
   setTimeout(() => {
     // Tạo thông báo kết quả
-    // const resultDisplay = document.createElement("div");
-    // resultDisplay.className = "dice-result";
-    // resultDisplay.innerHTML = `
-    //   <div class="${result === "Tài" ? "result-tai" : "result-xiu"}">
-    //     <h2>${result}</h2>
-    //     <p>${totalPoints} điểm</p>
-    //     <p>${diceResults.join(" + ")}</p>
-    //   </div>
-    // `;
+    const resultDisplay = document.createElement("div");
+    resultDisplay.className = "dice-result";
+    resultDisplay.innerHTML = `
+      <div class="${result === "Tài" ? "result-tai" : result === "Xỉu" ? "result-xiu" : "result-bo-ba"}">
+        <h2>${result}</h2>
+        <p>${totalPoints} điểm</p>
+        <p>${diceResults.join(" + ")}</p>
+      </div>
 
-    // diceBox.appendChild(resultDisplay);
+    `;
+    resultDisplay.style.display = "none";
+    resultDisplay.style.position = "absolute";
+    resultDisplay.style.top = "50%";
+    resultDisplay.style.left = "50%";
+    resultDisplay.style.transform = "translate(-50%, -50%)";
+    resultDisplay.style.background = "transparent";
+    resultDisplay.style.color = result === "Tài" ? "#FF5722" : "#4CAF50";
+    resultDisplay.style.padding = "15px 20px";
+    resultDisplay.style.borderRadius = "10px";
+    resultDisplay.style.fontWeight = "bold";
+    resultDisplay.style.zIndex = "200";
+    resultDisplay.style.textAlign = "center";
+    resultDisplay.style.animation = "fadeIn 0.5s, pulse 1s infinite alternate";
+    resultDisplay.style.textShadow = `0 0 10px ${result === "Tài" ? "#FF5722" : "#4CAF50"}`;
+
+    diceBox.appendChild(resultDisplay);
+
+    // Thêm hiệu ứng cho hình ảnh tương ứng với kết quả
+    applyWinnerEffect(result);
 
     // Xử lý tiền thắng/thua sau khi ra kết quả
-    if (typeof handleBetResult === "function") {
-      handleBetResult(result);
-    }
+    handleBetResult(result);
 
     // Đặt lại trạng thái trò chơi sau 5 giây
     setTimeout(() => {
-      if (typeof resetGameState === "function") {
-        resetGameState();
-      } else {
-        // Nếu hàm resetGameState chưa được định nghĩa, thực hiện reset cơ bản
-        isGameRunning = false;
-        diceBox.innerHTML = "";
-      }
+      // Xóa các hiệu ứng trước khi reset
+      removeWinnerEffects();
+      resetGameState();
     }, 5000);
-  }, 100);
+  }, 1000);
+}
+
+// Thêm hiệu ứng cho hình ảnh thắng
+function applyWinnerEffect(result) {
+  // Lấy các phần tử hình ảnh
+  const evenImage = document.querySelector(".el-even img"); // Chẵn - Xỉu
+  const oddImage = document.querySelector(".el-odd img"); // Lẻ - Tài
+
+  if (result === "Tài") {
+    // Nếu kết quả là Tài, thêm hiệu ứng cho hình ảnh lẻ (Tài)
+    oddImage.classList.add("winner-effect");
+    oddImage.parentElement.classList.add("winner-odd");
+
+    // Thêm hiệu ứng ánh sáng thông qua lớp phủ tạm thời
+    const glowOverlay = document.createElement("div");
+    glowOverlay.style.position = "absolute";
+    glowOverlay.style.top = "0";
+    glowOverlay.style.left = "0";
+    glowOverlay.style.width = "100%";
+    glowOverlay.style.height = "100%";
+    glowOverlay.style.background = "radial-gradient(circle, rgba(255, 87, 34, 0.4) 0%, rgba(255, 87, 34, 0) 70%)";
+    glowOverlay.style.animation = "pulse 1.5s infinite";
+    glowOverlay.style.zIndex = "50";
+    oddImage.parentElement.appendChild(glowOverlay);
+  } else {
+    // Nếu kết quả là Xỉu, thêm hiệu ứng cho hình ảnh chẵn (Xỉu)
+    evenImage.classList.add("winner-effect");
+    evenImage.parentElement.classList.add("winner-even");
+
+    // Thêm hiệu ứng ánh sáng thông qua lớp phủ tạm thời
+    const glowOverlay = document.createElement("div");
+    glowOverlay.style.position = "absolute";
+    glowOverlay.style.top = "0";
+    glowOverlay.style.left = "0";
+    glowOverlay.style.width = "100%";
+    glowOverlay.style.height = "100%";
+    glowOverlay.style.background = "radial-gradient(circle, rgba(76, 175, 80, 0.4) 0%, rgba(76, 175, 80, 0) 70%)";
+    glowOverlay.style.animation = "pulse 1.5s infinite";
+    glowOverlay.style.zIndex = "50";
+    evenImage.parentElement.appendChild(glowOverlay);
+  }
+}
+
+// Xóa tất cả các hiệu ứng khỏi hình ảnh
+function removeWinnerEffects() {
+  const evenImage = document.querySelector(".el-even img");
+  const oddImage = document.querySelector(".el-odd img");
+
+  // Xóa các lớp hiệu ứng
+  evenImage.classList.remove("winner-effect");
+  oddImage.classList.remove("winner-effect");
+  evenImage.parentElement.classList.remove("winner-even");
+  oddImage.parentElement.classList.remove("winner-odd");
+
+  // Xóa các lớp phủ ánh sáng
+  const glowOverlays = document.querySelectorAll(".el-even > div, .el-odd > div");
+  glowOverlays.forEach((overlay) => overlay.remove());
 }
 
 // Xử lý kết quả cược
@@ -500,10 +631,10 @@ function handleBetResult(result) {
   let winAmount = 0;
 
   // Chẵn ở bên trái (Xỉu), Lẻ ở bên phải (Tài)
-  if (result === "Tài" && betLeft > 0) {
+  if (result === "Xỉu" && betLeft > 0) {
     // Người chơi thắng khi đặt bên Chẵn (left) và kết quả là Xỉu
     winAmount = betLeft * 1.9; // Tỷ lệ thắng 1.9
-  } else if (result === "Xỉu" && betRight > 0) {
+  } else if (result === "Tài" && betRight > 0) {
     // Người chơi thắng khi đặt bên Lẻ (right) và kết quả là Tài
     winAmount = betRight * 1.9; // Tỷ lệ thắng 1.9
   }
