@@ -12,9 +12,21 @@ body {
   overflow: hidden;
 }
 
-.table {
-  margin-top: 100px;
+.container-table {
   position: relative;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.table {
+  position: relative;
+  width: 800px;
+  height: 600px;
+  margin: 0 auto;
 }
 
 .table img {
@@ -25,66 +37,74 @@ body {
 /* Các nút chức năng */
 .btn-delete {
   position: absolute;
-  top: -160px;
-  right: 110px;
+  top: 150px;
+  right: 160px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 .btn-cup {
   position: absolute;
-  top: -80px;
-  right: 40px;
+  top: 240px;
+  right: 100px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 .btn-chat {
   position: absolute;
-  top: 20px;
-  right: 40px;
+  top: 330px;
+  right: 110px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 .btn-hand-delete {
   position: absolute;
-  top: 100px;
-  right: 90px;
+  top: 400px;
+  right: 160px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 .btn-dor {
   position: absolute;
-  top: -155px;
-  left: 50px;
+  top: 150px;
+  left: 100px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 .btn-rank {
   position: absolute;
-  top: -80px;
-  left: -20px;
+  top: 240px;
+  left: 40px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 .btn-question {
   position: absolute;
-  top: 20px;
-  left: -30px;
+  top: 330px;
+  left: 50px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 .btn-note {
   position: absolute;
-  top: 100px;
-  left: 20px;
+  top: 400px;
+  left: 100px;
   cursor: pointer;
   transition: transform 0.3s ease;
+  z-index: 10;
 }
 
 /* Hiệu ứng khi hover các nút */
@@ -112,9 +132,25 @@ body {
 }
 
 /* Bát và đĩa */
+.el-bowl {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 5;
+}
+
 .el-bowl img {
   width: 200px;
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.el-plate {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 15;
 }
 
 .el-plate img {
@@ -125,14 +161,16 @@ body {
 /* Phần tài xỉu */
 .el-even {
   position: absolute;
-  bottom: 130px;
-  left: 60px;
+  top: 180px;
+  left: 150px;
+  z-index: 5;
 }
 
 .el-odd {
   position: absolute;
-  bottom: 130px;
-  right: 200px;
+  top: 180px;
+  right: 280px;
+  z-index: 5;
 }
 
 .el-even img,
@@ -149,16 +187,18 @@ body {
 /* Phần đặt cược */
 .el-bet-money-right {
   position: absolute;
-  bottom: -20px;
-  right: 220px;
+  bottom: 270px;
+  right: 300px;
   cursor: pointer;
+  z-index: 5;
 }
 
 .el-bet-money-left {
   position: absolute;
-  bottom: -20px;
-  left: 80px;
+  bottom: 270px;
+  left: 160px;
   cursor: pointer;
+  z-index: 5;
 }
 
 .el-bet-money-right img,
@@ -174,14 +214,16 @@ body {
 
 .el-bet-main-right {
   position: absolute;
-  top: 80px;
-  right: 90px;
+  bottom: 200px;
+  right: 170px;
+  z-index: 6;
 }
 
 .el-bet-main-left {
   position: absolute;
-  top: 80px;
-  left: 100px;
+  bottom: 200px;
+  left: 170px;
+  z-index: 6;
 }
 
 .el-bet-main-right span,
@@ -205,13 +247,15 @@ body {
 
 /* Container chọn mức cược */
 .container-bet {
+  position: absolute;
+  bottom: 20px;
+  left: 50%;
+  transform: translateX(-50%);
   cursor: pointer;
   visibility: hidden;
-  margin-top: 160px;
-  background-color: rgba(0, 0, 0, 0.7);
-  padding: 15px;
   border-radius: 10px;
   box-shadow: 0 0 20px rgba(255, 223, 0, 0.3);
+  z-index: 20;
 }
 
 .container-bet [class^="k-"],
@@ -264,8 +308,9 @@ body {
 /* Container hiển thị tiền hiện tại */
 .container-current-money {
   position: absolute;
-  bottom: 0;
-  left: 0;
+  bottom: 10px;
+  left: 10px;
+  z-index: 25;
 }
 
 .current-money {
@@ -273,9 +318,6 @@ body {
 }
 
 .current-money img {
-  position: absolute;
-  bottom: 0;
-  left: 0;
   width: 230px;
 }
 
@@ -290,7 +332,6 @@ body {
 }
 
 .current-money .money {
-  z-index: 1;
   position: absolute;
   left: 100px;
   bottom: 10px;
@@ -298,6 +339,7 @@ body {
   font-weight: 500;
   color: rgb(242, 225, 159);
   text-shadow: 0 0 3px rgba(0, 0, 0, 0.8);
+  z-index: 26;
 }
 
 /* Đồng hồ đếm ngược */
@@ -311,13 +353,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  transform: translate(-50%, -50%);
   font-family: "Poppins", sans-serif;
   text-transform: uppercase;
   letter-spacing: 1px;
   animation: pulse 1.5s infinite;
   border: none;
   text-shadow: 0 0 15px rgba(255, 225, 0, 0.8);
+  z-index: 16;
 }
 
 @keyframes pulse {
@@ -361,10 +403,9 @@ body {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: 250px;
+  width: 150px;
   height: 150px;
   border: none;
-  margin: 20px auto;
   background-color: transparent;
   overflow: visible;
   display: flex;
@@ -395,12 +436,10 @@ body {
 }
 
 .shaking {
-  position: absolute;
   animation: shake 0.1s infinite alternate;
 }
 
 .final {
-  position: absolute;
   animation: reveal 0.5s ease-out;
 }
 
@@ -431,7 +470,7 @@ body {
   text-align: center;
   animation: fadeIn 0.5s;
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.5);
-  z-index: 200;
+  z-index: 100;
 }
 
 .result-tai {
