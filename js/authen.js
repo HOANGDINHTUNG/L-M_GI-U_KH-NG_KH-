@@ -81,6 +81,6 @@ function login(event) {
     }
 
     localStorage.setItem("userLogin", JSON.stringify(userData))
-    authenCheck()
+    window.location.href = "/index.html"
 }
 
