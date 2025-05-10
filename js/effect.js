@@ -160,7 +160,7 @@ function startCountdowns(timerId, startTime, boxId) {
     let diceValues = [];
 
     // Thay đổi các hình ảnh xúc xắc ngẫu nhiên và lưu giá trị của chúng
-    diceImages.forEach((image, index) => {
+    diceImages.forEach((image) => {
       const randomValue = Math.floor(Math.random() * 6) + 1; // Giá trị xúc xắc ngẫu nhiên từ 1 đến 6
       diceValues.push(randomValue);
 
