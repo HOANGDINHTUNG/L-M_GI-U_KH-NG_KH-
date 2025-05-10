@@ -49,7 +49,6 @@ btnHandDelete.addEventListener("click", () => {
   }
 });
 
-
 // Xử lý khi click các mệnh giá
 const amountButtons = document.querySelectorAll("[data-amount]");
 amountButtons.forEach((btn) => {
@@ -68,7 +67,14 @@ amountButtons.forEach((btn) => {
       betDisplay = elBetMoneyRight.querySelector("span");
     }
 
+    // Lấy giá trị từ giao diện và chuyển về số
     let currentAmount = parseInt(betDisplay.textContent.replace(/,/g, "")) || 0;
+
+    // (tuỳ chọn) Cộng thêm, trừ bớt...
+    currentAmount += 1000 -1000;
+
+    // Hiển thị lại với dấu phẩy
+    betDisplay.textContent = currentAmount.toLocaleString("en-US");
 
     if (amount > userLogin.assets) {
       alert("Không đủ tiền để cược số này!");
@@ -289,9 +295,9 @@ function getRandomDiceValue() {
 
 function getFixedDicePosition(index, diceSize = 60, containerWidth = 200, containerHeight = 150) {
   const fixedPositions = [
-    { x: 20, y: 20 },
-    { x: containerWidth - diceSize - 20, y: 20 },
-    { x: containerWidth / 2 - diceSize / 2, y: containerHeight - diceSize - 20 },
+    {x: 20, y: 20},
+    {x: containerWidth - diceSize - 20, y: 20},
+    {x: containerWidth / 2 - diceSize / 2, y: containerHeight - diceSize - 20},
     // Thêm vị trí nữa nếu bạn có nhiều xúc xắc hơn
   ];
 
@@ -302,7 +308,6 @@ function getFixedDicePosition(index, diceSize = 60, containerWidth = 200, contai
     }
   );
 }
-
 
 // Bắt đầu trò chơi xúc xắc
 function startDiceGame() {
@@ -390,17 +395,11 @@ function showDice() {
   }
 
   // Kết quả cuối cùng của xúc xắc
-  const finalDiceValues = [
-    getRandomDiceValue(),
-    getRandomDiceValue(),
-    getRandomDiceValue(),
-  ];
+  const finalDiceValues = [getRandomDiceValue(), getRandomDiceValue(), getRandomDiceValue()];
 
   const shakeInterval = setInterval(() => {
     diceContainers.forEach((container, index) => {
-      const diceValue = shakeCount < shakeTimes - 1
-        ? getRandomDiceValue()
-        : finalDiceValues[index];
+      const diceValue = shakeCount < shakeTimes - 1 ? getRandomDiceValue() : finalDiceValues[index];
 
       container.innerHTML = "";
 
@@ -433,7 +432,6 @@ function showDice() {
     }
   }, shakeDuration / shakeTimes);
 }
-
 
 // Cập nhật lịch sử kết quả trong function showFinalDiceResults
 function showFinalDiceResults(diceResults, diceContainers) {
@@ -521,31 +519,31 @@ function showFinalDiceResults(diceResults, diceContainers) {
 // Hàm cập nhật lịch sử kết quả
 function updateResultHistory(result) {
   const resultOddElement = document.querySelector(".result-odd");
-  
+
   if (!resultOddElement) return;
-  
+
   // Tạo hình ảnh mới để thêm vào cuối
   const newImg = document.createElement("img");
-  
+
   if (result === "Xỉu") {
     newImg.src = "image/image-game/dot.tai.png";
     newImg.style.width = "17px"; // Giữ nguyên style như các hình ảnh Tài hiện có
-    newImg.style.marginRight="5px"
+    newImg.style.marginRight = "5px";
   } else {
     newImg.src = "image/image-game/dot.xiu.png";
-    newImg.style.marginRight="5px"
+    newImg.style.marginRight = "5px";
     // Không cần thêm style width cho hình ảnh Xỉu (dùng kích thước mặc định)
   }
-  
+
   // Thêm hình ảnh mới vào cuối
   resultOddElement.appendChild(newImg);
-  
+
   // Xóa hình ảnh đầu tiên để giữ số lượng ổn định
-  if (resultOddElement.children.length > 14) { // Giữ tối đa 15 hình ảnh
+  if (resultOddElement.children.length > 14) {
+    // Giữ tối đa 15 hình ảnh
     resultOddElement.removeChild(resultOddElement.children[0]);
   }
 }
-
 
 // Thêm hiệu ứng cho hình ảnh thắng
 function applyWinnerEffect(result) {
