@@ -13,7 +13,7 @@ signInButton.addEventListener('click', () => {
 
 function authenCheck() {
     if(localStorage.getItem("userLogin")) {
-        window.location.href = "index.html"
+        window.location.href = "/index.html"
     }
 }
 authenCheck()
@@ -81,6 +81,6 @@ function login(event) {
     }
 
     localStorage.setItem("userLogin", JSON.stringify(userData))
-    window.location.href = "index.html"
+    authenCheck()
 }
 
