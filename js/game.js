@@ -49,6 +49,58 @@ btnHandDelete.addEventListener("click", () => {
   }
 });
 
+// Xử lý nút nhân đôi tiền cược (X2)
+const btnX2 = document.querySelector(".btn-x2");
+btnX2.addEventListener("click", () => {
+  if (!currentBetSide) {
+    alert("Hãy chọn bên cược trước!");
+    return;
+  }
+
+  let betDisplay;
+  if (currentBetSide === "left") {
+    betDisplay = elBetMoneyLeft.querySelector("span");
+  } else {
+    betDisplay = elBetMoneyRight.querySelector("span");
+  }
+
+  // Kiểm tra xem đã có tiền cược chưa
+  if (!betDisplay || !betDisplay.textContent) {
+    alert("Vui lòng đặt cược trước khi nhân đôi!");
+    return;
+  }
+
+  // Lấy số tiền cược hiện tại và chuyển về số
+  let currentAmount = parseInt(betDisplay.textContent.replace(/,/g, "")) || 0;
+  let doubledAmount = currentAmount * 2;
+
+  // Kiểm tra xem có đủ tiền để nhân đôi không
+  if (doubledAmount - currentAmount > userLogin.assets) {
+    alert("Không đủ tiền để nhân đôi cược!");
+    return;
+  }
+
+  // Kiểm tra xem có vượt quá giới hạn cược không
+  if (doubledAmount > MAX_BET) {
+    alert("Vượt quá giới hạn cược!");
+    return;
+  }
+
+  // Trừ tiền từ tài khoản người dùng
+  const additionalBet = doubledAmount - currentAmount;
+  userLogin.assets -= additionalBet;
+  money.textContent = userLogin.assets.toLocaleString();
+
+  // Cập nhật hiển thị số tiền cược
+  betDisplay.textContent = doubledAmount.toLocaleString();
+
+  // Hiệu ứng nhấp nháy cho số tiền cược
+  betDisplay.style.animation = "blink-bet 0.5s ease";
+  setTimeout(() => {
+    betDisplay.style.animation = "";
+  }, 500);
+});
+
 // Xử lý khi click các mệnh giá
 const amountButtons = document.querySelectorAll("[data-amount]");
 amountButtons.forEach((btn) => {
@@ -71,7 +123,7 @@ amountButtons.forEach((btn) => {
     let currentAmount = parseInt(betDisplay.textContent.replace(/,/g, "")) || 0;
 
     // (tuỳ chọn) Cộng thêm, trừ bớt...
-    currentAmount += 1000 -1000;
+    currentAmount += 1000 - 1000;
 
     // Hiển thị lại với dấu phẩy
     betDisplay.textContent = currentAmount.toLocaleString("en-US");
@@ -94,7 +146,7 @@ amountButtons.forEach((btn) => {
   });
 });
 
-// Nút x2
+// xử lý số tiền đặt cược
 document.querySelector(".btn-bet").addEventListener("click", () => {
   const spanLeft = elBetMoneyLeft.querySelector("span");
   const spanRight = elBetMoneyRight.querySelector("span");
@@ -128,7 +180,8 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
 
     setTimeout(() => {
       currentMainLeft += betLeft;
-      betMainLeft.textContent = currentMainLeft.toLocaleString();
+      evenTotal+=betLeft;
+      betMainLeft.textContent = currentMainLeft.toLocaleString("en-US");
       clone.remove();
       elBetMoneyLeft.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     }, 600);
@@ -155,7 +208,8 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
 
     setTimeout(() => {
       currentMainRight += betRight;
-      betMainRight.textContent = currentMainRight.toLocaleString();
+      oddTotal+=betRight
+      betMainRight.textContent = currentMainRight.toLocaleString("en-US");
       clone.remove();
       elBetMoneyRight.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     }, 600);
@@ -309,6 +363,60 @@ function getFixedDicePosition(index, diceSize = 60, containerWidth = 200, contai
   );
 }
 
+const evenEl = document.getElementById("sumEven");
+const oddEl = document.getElementById("sumOdd");
+
+let evenTotal = 0;
+let oddTotal = 0;
+let timer = null;
+const duration = 20; // đếm trong 5 giây
+let timePassed = 0;
+
+function numberToImage(number, container) {
+  container.innerHTML = "";
+  const str = number.toLocaleString("en-US"); // VD: 123,456,789
+  for (let char of str) {
+    const img = document.createElement("img");
+    if (char === ",") {
+      img.src = "./image/image-game/,.png";
+      img.style.width = "9px";
+      img.style.alignSelf = "flex-end";
+    } else {
+      img.src = `./image/image-game/${char}.png`;
+    }
+    container.appendChild(img);
+  }
+}
+
+function startRandomCounter() {
+  evenTotal = 0;
+  oddTotal = 0;
+  numberToImage(evenTotal, evenEl);
+  numberToImage(oddTotal, oddEl);
+  timePassed = 0;
+
+  if (timer) clearInterval(timer);
+
+  timer = setInterval(() => {
+    if (timePassed >= duration) {
+      clearInterval(timer);
+      return;
+    }
+
+    // Random từ 100 triệu đến 1 tỷ
+    const randEven = Math.floor(Math.random() * (1_000_000_000 - 100_000_000 + 1)) + 100_000_000;
+    const randOdd = Math.floor(Math.random() * (1_000_000_000 - 100_000_000 + 1)) + 100_000_000;
+
+    evenTotal += randEven;
+    oddTotal += randOdd;
+
+    numberToImage(evenTotal, evenEl);
+    numberToImage(oddTotal, oddEl);
+
+    timePassed++;
+  }, 1000);
+}
+
 // Bắt đầu trò chơi xúc xắc
 function startDiceGame() {
   if (isGameRunning) return;
@@ -325,7 +433,7 @@ function startDiceGame() {
   diceBox.innerHTML = "";
 
   // Đếm ngược
-  let timeLeft = 5;
+  let timeLeft = 20;
   countdownElement.textContent = timeLeft;
 
   // Thêm class cho đồng hồ đếm ngược khi thời gian sắp hết
@@ -661,6 +769,9 @@ function resetGameState() {
   // Sẵn sàng cho ván tiếp theo - có thể tự động bắt đầu sau một khoảng thời gian
   setTimeout(() => {
     startDiceGame();
+    evenTotal=0
+    oddTotal=0
+    startRandomCounter();
   }, 3000);
 }
 
@@ -753,38 +864,9 @@ style.textContent = `
     font-size: 18px;
   }
 `;
-document.head.appendChild(style);
-
-// Thêm nút lắc xúc xắc để kiểm tra
-const quickRollButton = document.createElement("button");
-quickRollButton.textContent = "Test Xúc Xắc";
-quickRollButton.className = "quick-roll-button";
-quickRollButton.style.position = "fixed";
-quickRollButton.style.bottom = "10px";
-quickRollButton.style.right = "10px";
-quickRollButton.style.padding = "10px 15px";
-quickRollButton.style.backgroundColor = "#ff9800";
-quickRollButton.style.color = "white";
-quickRollButton.style.border = "none";
-quickRollButton.style.borderRadius = "5px";
-quickRollButton.style.zIndex = "1000";
-quickRollButton.style.cursor = "pointer";
-quickRollButton.style.boxShadow = "0 4px 6px rgba(0,0,0,0.1)";
-quickRollButton.style.transition = "all 0.3s ease";
-quickRollButton.addEventListener("click", () => {
-  if (!isGameRunning) {
-    startDiceGame();
-  }
-});
-quickRollButton.addEventListener("mouseover", () => {
-  quickRollButton.style.backgroundColor = "#f57c00";
-  quickRollButton.style.transform = "scale(1.05)";
-});
-quickRollButton.addEventListener("mouseout", () => {
-  quickRollButton.style.backgroundColor = "#ff9800";
-  quickRollButton.style.transform = "scale(1)";
-});
-document.body.appendChild(quickRollButton);
 
 // Khởi tạo hiển thị khi tải trang
-displayAllDice();
+document.addEventListener("DOMContentLoaded",()=>{
+  displayAllDice();
+  resetGameState()
+})
