@@ -36,6 +36,20 @@ function showInputBetLeft() {
   containerBet.style.visibility = "visible";
 }
 
+// đổi icon
+const btnHandDelete = document.querySelector(".btn-hand-delete");
+btnHandDelete.addEventListener("click", () => {
+  const img = btnHandDelete.querySelector("img");
+  // Lấy tên file cuối cùng trong đường dẫn ảnh
+  const fileName = img.src.split("/").pop();
+  if (fileName === "hand-delete.png") {
+    img.src = "../image/image-game/hand.png";
+  } else {
+    img.src = "../image/image-game/hand-delete.png";
+  }
+});
+
+
 // Xử lý khi click các mệnh giá
 const amountButtons = document.querySelectorAll("[data-amount]");
 amountButtons.forEach((btn) => {
@@ -179,8 +193,6 @@ document.querySelector(".btn-cancel").addEventListener("click", () => {
 
 // ===== PHẦN XÚC XẮC NGẪU NHIÊN =====
 
-// ===== PHẦN XÚC XẮC NGẪU NHIÊN =====
-
 const countdownElement = document.getElementById("countdown");
 const plateImg = document.querySelector(".plate-img");
 const diceBox = document.getElementById("diceBox");
@@ -275,60 +287,22 @@ function getRandomDiceValue() {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-// Tạo xúc xắc ở vị trí không chồng lấp với khoảng cách an toàn
-function getRandomNonOverlappingPosition(
-  existingPositions,
-  diceSize = 60,
-  containerWidth = 250,
-  containerHeight = 150,
-  safeDistance = 10
-) {
-  let x,
-    y,
-    attempts = 0;
-  let overlapping = true;
-  const maxAttempts = 100;
+function getFixedDicePosition(index, diceSize = 60, containerWidth = 200, containerHeight = 150) {
+  const fixedPositions = [
+    { x: 20, y: 20 },
+    { x: containerWidth - diceSize - 20, y: 20 },
+    { x: containerWidth / 2 - diceSize / 2, y: containerHeight - diceSize - 20 },
+    // Thêm vị trí nữa nếu bạn có nhiều xúc xắc hơn
+  ];
 
-  // Đảm bảo kích thước xúc xắc + khoảng cách an toàn không lớn hơn kích thước container
-  const effectiveSize = diceSize + safeDistance;
-
-  while (overlapping && attempts < maxAttempts) {
-    // Tạo vị trí ngẫu nhiên trong phạm vi container
-    x = Math.floor(Math.random() * (containerWidth - diceSize));
-    y = Math.floor(Math.random() * (containerHeight - diceSize));
-
-    // Kiểm tra xem vị trí mới có đủ xa các vị trí hiện tại không
-    overlapping = existingPositions.some((pos) => {
-      const dx = pos.x - x;
-      const dy = pos.y - y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      // Kiểm tra xem khoảng cách có nhỏ hơn tổng kích thước hai xúc xắc + khoảng cách an toàn không
-      return distance < diceSize + safeDistance;
-    });
-
-    attempts++;
-  }
-
-  // Nếu sau nhiều lần thử mà vẫn không tìm được vị trí phù hợp, áp dụng chiến lược backup
-  if (attempts >= maxAttempts) {
-    // Phân chia không gian thành lưới và đặt xúc xắc vào các vị trí cố định
-    const gridPositions = [
-      {x: 20, y: 20},
-      {x: containerWidth - diceSize - 20, y: 20},
-      {x: containerWidth / 2 - diceSize / 2, y: containerHeight - diceSize - 20},
-    ];
-
-    // Lấy vị trí lưới tương ứng với số lượng xúc xắc hiện tại
-    return (
-      gridPositions[existingPositions.length] || {
-        x: containerWidth / 2 - diceSize / 2,
-        y: containerHeight / 2 - diceSize / 2,
-      }
-    );
-  }
-
-  return {x, y};
+  return (
+    fixedPositions[index] || {
+      x: containerWidth / 2 - diceSize / 2,
+      y: containerHeight / 2 - diceSize / 2,
+    }
+  );
 }
+
 
 // Bắt đầu trò chơi xúc xắc
 function startDiceGame() {
@@ -346,7 +320,7 @@ function startDiceGame() {
   diceBox.innerHTML = "";
 
   // Đếm ngược
-  let timeLeft = 10;
+  let timeLeft = 5;
   countdownElement.textContent = timeLeft;
 
   // Thêm class cho đồng hồ đếm ngược khi thời gian sắp hết
@@ -378,45 +352,30 @@ function startDiceGame() {
   }, 1000);
 }
 
-// Hiển thị xúc xắc với hiệu ứng lắc - Cải tiến về vị trí
 function showDice() {
   // Xóa nội dung cũ
   diceBox.innerHTML = "";
 
   // Thiết lập kích thước và vị trí box chứa xúc xắc
   diceBox.style.position = "absolute";
-  diceBox.style.width = "200px";
+  diceBox.style.width = "200px"; // Khớp containerWidth của getFixedDicePosition
   diceBox.style.height = "150px";
   diceBox.style.border = "1px solid transparent";
   diceBox.style.overflow = "visible";
 
-  // Tạo hiệu ứng lắc cải tiến
-  const shakeDuration = 1500; // 1.5 giây
+  const diceSize = 80;
+  const diceContainers = [];
+
+  // Tạo hiệu ứng lắc
+  const shakeDuration = 1500;
   const shakeTimes = 15;
   let shakeCount = 0;
 
-  // Kích thước xúc xắc
-  const diceSize = 70;
-
-  // Mảng lưu trữ vị trí xúc xắc để tránh chồng lấp
-  const dicePositions = [];
-
-  // Tạo container cho mỗi xúc xắc với vị trí không chồng lấp
-  const diceContainers = [];
   for (let i = 0; i < 3; i++) {
-    // Tính toán vị trí không chồng lấp
-    const position = getRandomNonOverlappingPosition(
-      dicePositions,
-      diceSize,
-      parseInt(diceBox.style.width),
-      parseInt(diceBox.style.height),
-      20 // Khoảng cách an toàn giữa các xúc xắc
-    );
+    // Lấy vị trí cố định theo index
+    const position = getFixedDicePosition(i, diceSize, 200, 150);
 
-    // Lưu vị trí để kiểm tra cho xúc xắc tiếp theo
-    dicePositions.push(position);
-
-    // Tạo container cho xúc xắc
+    // Tạo container xúc xắc
     const diceContainer = document.createElement("div");
     diceContainer.className = "dice-container";
     diceContainer.style.position = "absolute";
@@ -430,20 +389,21 @@ function showDice() {
     diceContainers.push(diceContainer);
   }
 
-  // Tạo các giá trị cố định cho kết quả cuối cùng
-  const finalDiceValues = [getRandomDiceValue(), getRandomDiceValue(), getRandomDiceValue()];
+  // Kết quả cuối cùng của xúc xắc
+  const finalDiceValues = [
+    getRandomDiceValue(),
+    getRandomDiceValue(),
+    getRandomDiceValue(),
+  ];
 
   const shakeInterval = setInterval(() => {
-    // Tạo hiệu ứng lắc tự nhiên hơn cho từng xúc xắc
     diceContainers.forEach((container, index) => {
-      // Lấy giá trị xúc xắc ngẫu nhiên trong quá trình lắc,
-      // chỉ hiển thị kết quả cuối cùng ở lần cuối
-      const diceValue = shakeCount < shakeTimes - 1 ? getRandomDiceValue() : finalDiceValues[index];
+      const diceValue = shakeCount < shakeTimes - 1
+        ? getRandomDiceValue()
+        : finalDiceValues[index];
 
-      // Xóa xúc xắc cũ
       container.innerHTML = "";
 
-      // Tạo xúc xắc mới
       const diceImg = document.createElement("img");
       diceImg.src = diceImages[diceValue - 1];
       diceImg.className = "dice-img shaking";
@@ -451,19 +411,15 @@ function showDice() {
       diceImg.style.height = "100%";
       diceImg.style.background = "transparent";
       diceImg.style.border = "none";
-      diceImg.style.borderRadius = "0"; // tránh bo góc tạo viền trắng
+      diceImg.style.borderRadius = "0";
 
-      // Thêm hiệu ứng di chuyển ngẫu nhiên trong quá trình lắc
       if (shakeCount < shakeTimes - 1) {
-        // Hiệu ứng rung lắc trong khu vực nhỏ
-        const offsetX = Math.random() * 8 - 4; // Di chuyển ngẫu nhiên -4px đến 4px
+        const offsetX = Math.random() * 8 - 4;
         const offsetY = Math.random() * 8 - 4;
-        const rotate = Math.random() * 40 - 20; // Xoay ngẫu nhiên -20 đến 20 độ
+        const rotate = Math.random() * 40 - 20;
 
-        // Áp dụng hiệu ứng rung lắc
         container.style.transform = `translate(${offsetX}px, ${offsetY}px) rotate(${rotate}deg)`;
       } else {
-        // Dừng hiệu ứng rung lắc ở lần cuối
         container.style.transform = "none";
       }
 
@@ -471,17 +427,15 @@ function showDice() {
     });
 
     shakeCount++;
-
-    // Tăng dần thời gian hiển thị các mặt xúc xắc để tạo hiệu ứng chậm dần
     if (shakeCount >= shakeTimes) {
       clearInterval(shakeInterval);
-      // Hiển thị kết quả cuối cùng với hiệu ứng nảy lên
       showFinalDiceResults(finalDiceValues, diceContainers);
     }
   }, shakeDuration / shakeTimes);
 }
 
-// Sửa đổi hàm showFinalDiceResults để thêm hiệu ứng
+
+// Cập nhật lịch sử kết quả trong function showFinalDiceResults
 function showFinalDiceResults(diceResults, diceContainers) {
   // Xóa xúc xắc cũ
   diceContainers.forEach((container, index) => {
@@ -517,6 +471,9 @@ function showFinalDiceResults(diceResults, diceContainers) {
     result = "Tài";
   }
 
+  // Cập nhật lịch sử kết quả
+  updateResultHistory(result);
+
   // Hiển thị kết quả với hiệu ứng đẹp mắt
   setTimeout(() => {
     // Tạo thông báo kết quả
@@ -528,7 +485,6 @@ function showFinalDiceResults(diceResults, diceContainers) {
         <p>${totalPoints} điểm</p>
         <p>${diceResults.join(" + ")}</p>
       </div>
-
     `;
     resultDisplay.style.display = "none";
     resultDisplay.style.position = "absolute";
@@ -561,6 +517,35 @@ function showFinalDiceResults(diceResults, diceContainers) {
     }, 5000);
   }, 1000);
 }
+
+// Hàm cập nhật lịch sử kết quả
+function updateResultHistory(result) {
+  const resultOddElement = document.querySelector(".result-odd");
+  
+  if (!resultOddElement) return;
+  
+  // Tạo hình ảnh mới để thêm vào cuối
+  const newImg = document.createElement("img");
+  
+  if (result === "Xỉu") {
+    newImg.src = "../image/image-game/dot.tai.png";
+    newImg.style.width = "17px"; // Giữ nguyên style như các hình ảnh Tài hiện có
+    newImg.style.marginRight="5px"
+  } else {
+    newImg.src = "../image/image-game/dot.xiu.png";
+    newImg.style.marginRight="5px"
+    // Không cần thêm style width cho hình ảnh Xỉu (dùng kích thước mặc định)
+  }
+  
+  // Thêm hình ảnh mới vào cuối
+  resultOddElement.appendChild(newImg);
+  
+  // Xóa hình ảnh đầu tiên để giữ số lượng ổn định
+  if (resultOddElement.children.length > 14) { // Giữ tối đa 15 hình ảnh
+    resultOddElement.removeChild(resultOddElement.children[0]);
+  }
+}
+
 
 // Thêm hiệu ứng cho hình ảnh thắng
 function applyWinnerEffect(result) {

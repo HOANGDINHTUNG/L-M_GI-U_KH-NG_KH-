@@ -163,14 +163,27 @@ body {
   position: absolute;
   top: 180px;
   left: 150px;
-  z-index: 5;
+  z-index: 1000;
 }
 
 .el-odd {
   position: absolute;
   top: 180px;
   right: 280px;
-  z-index: 5;
+  z-index: 1000;
+}
+
+// phần kết quả
+.result-odd{
+  position: absolute;
+  bottom: 180px;
+  left: 214px;
+  border-radius: 10px;
+  height: 23px;
+  width: 380px;
+  img{
+    width: 23px;
+  }
 }
 
 .el-even img,
