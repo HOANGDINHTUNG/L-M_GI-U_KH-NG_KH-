@@ -23,18 +23,18 @@ updateClock();
 
 // ảnh duy chuyển
 const images = [
-  "./image/338aba802734b9e0f38961c8263aa6de.jpg",
-  "./image/05db3fcd496810d1dc2d602d3ed49387.png",
-  "./image/06aa7e4b9bc32580efca9ecf97380143.png",
-  "./image/316b7e36212a152b72a6337ed56d8048.png",
-  "./image/41c2f49b74a4b1feb30e69e74e63dddc.png",
-  "./image/52185d3a200d1c9edccf045f1801a518.png",
-  "./image/744d6d78aaa1ea248a4e22131bdc405b.png",
-  "./image/86e6a9d0277900c0187165fe47779cee.png",
-  "./image/982d8b69eede011ded6cae66b76840f7.png",
-  "./image/bd23943aee12bcfb7230b6ae3244b727.jpg",
-  "./image/bf03489ec13406fd079e5abf60535be9.jpg",
-  "./image/d523c7753c26357df40d2cdba5b01e26.png",
+  "image/338aba802734b9e0f38961c8263aa6de.jpg",
+  "image/05db3fcd496810d1dc2d602d3ed49387.png",
+  "image/06aa7e4b9bc32580efca9ecf97380143.png",
+  "image/316b7e36212a152b72a6337ed56d8048.png",
+  "image/41c2f49b74a4b1feb30e69e74e63dddc.png",
+  "image/52185d3a200d1c9edccf045f1801a518.png",
+  "image/744d6d78aaa1ea248a4e22131bdc405b.png",
+  "image/86e6a9d0277900c0187165fe47779cee.png",
+  "image/982d8b69eede011ded6cae66b76840f7.png",
+  "image/bd23943aee12bcfb7230b6ae3244b727.jpg",
+  "image/bf03489ec13406fd079e5abf60535be9.jpg",
+  "image/d523c7753c26357df40d2cdba5b01e26.png",
 ];
 
 let index = 0;
@@ -63,16 +63,16 @@ function slide(direction) {
 
 // Danh sách các hình ảnh số từ 0 đến 9
 const imageList = [
-  "./image/ball/ball 0.png",
-  "./image/ball/ball 1.png",
-  "./image/ball/ball 2.png",
-  "./image/ball/ball 3.png",
-  "./image/ball/ball 4.png",
-  "./image/ball/ball 5.png",
-  "./image/ball/ball 6.png",
-  "./image/ball/ball 7.png",
-  "./image/ball/ball 8.png",
-  "./image/ball/ball 9.png",
+  "image/ball/ball 0.png",
+  "image/ball/ball 1.png",
+  "image/ball/ball 2.png",
+  "image/ball/ball 3.png",
+  "image/ball/ball 4.png",
+  "image/ball/ball 5.png",
+  "image/ball/ball 6.png",
+  "image/ball/ball 7.png",
+  "image/ball/ball 8.png",
+  "image/ball/ball 9.png",
 ];
 
 // Hàm cập nhật đồng hồ đếm ngược cho từng đối tượng
@@ -165,7 +165,7 @@ function startCountdowns(timerId, startTime, boxId) {
       diceValues.push(randomValue);
 
       // Cập nhật ảnh dựa trên giá trị ngẫu nhiên
-      image.src = `./image/xucsac/dice (${randomValue}).png`;
+      image.src = `image/xucsac/dice (${randomValue}).png`;
     });
 
     // Tính tổng của ba xúc xắc

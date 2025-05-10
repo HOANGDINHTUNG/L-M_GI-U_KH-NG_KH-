@@ -34,7 +34,7 @@ function renderHeader() {
                 ?`
                   <button id="btn-admin">
                     <i class="fa-solid fa-house-user"></i>
-                    <a href="./admin.html">Move to several owners</a>
+                    <a href="admin.html">Move to several owners</a>
                   </button>
                 `
                 :`
@@ -56,7 +56,7 @@ function renderHeader() {
               }
               <div class="account-user d-flex gap-2">
                 <div class="rounded-circle">
-                  <img src="./image/1455615063-than-bai-1.webp" />
+                  <img src="image/1455615063-than-bai-1.webp" />
                 </div>
                 <div class="d-flex flex-column">
                   <span>${userLogin.name}</span>
@@ -125,7 +125,7 @@ function renderHeader() {
               </form>
               <div class="buttonOver">
                 <i class="fa-solid fa-user-plus"></i>
-                <button><a href="./authen.html" target="_parent">Đăng ký</a></button>
+                <button><a href="authen.html" target="_parent">Đăng ký</a></button>
               </div>
               <div class="google-login-button">
                 <img src="https://www.google.com/s2/favicons?domain=google.com" />
@@ -153,11 +153,11 @@ let carouselItem=document.querySelectorAll(".carouselItem")[12]
 carouselItem.addEventListener('click',()=>{
   if(userLogin){
     play_btn.innerHTML=`
-      <a href="./game.html">Vào trò chơi</a>
+      <a href="game.html">Vào trò chơi</a>
     `
   }else{
     play_btn.innerHTML=`
-      <a href="./authen.html" target="_parent">Vào trò chơi</a>
+      <a href="authen.html" target="_parent">Vào trò chơi</a>
     `
   }
 })

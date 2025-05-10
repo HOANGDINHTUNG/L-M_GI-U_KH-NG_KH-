@@ -15,11 +15,11 @@ const MAX_BET = 9999999999; // Giới hạn tổng số tiền cược
 function showInputBetRight() {
   currentBetSide = "right";
   elBetMoneyRight.innerHTML = `
-    <img src="./image/image-game/money.png" class="position-absolute">
+    <img src="image/image-game/money.png" class="position-absolute">
     <span></span>
   `;
   elBetMoneyLeft.innerHTML = `
-    <img src="./image/image-game/cuoc.png" class="position-absolute">
+    <img src="image/image-game/cuoc.png" class="position-absolute">
   `;
   containerBet.style.visibility = "visible";
 }
@@ -27,11 +27,11 @@ function showInputBetRight() {
 function showInputBetLeft() {
   currentBetSide = "left";
   elBetMoneyLeft.innerHTML = `
-    <img src="./image/image-game/money.png" class="position-absolute">
+    <img src="image/image-game/money.png" class="position-absolute">
     <span></span>
   `;
   elBetMoneyRight.innerHTML = `
-    <img src="./image/image-game/cuoc.png" class="position-absolute">
+    <img src="image/image-game/cuoc.png" class="position-absolute">
   `;
   containerBet.style.visibility = "visible";
 }
@@ -43,9 +43,9 @@ btnHandDelete.addEventListener("click", () => {
   // Lấy tên file cuối cùng trong đường dẫn ảnh
   const fileName = img.src.split("/").pop();
   if (fileName === "hand-delete.png") {
-    img.src = "./image/image-game/hand.png";
+    img.src = "image/image-game/hand.png";
   } else {
-    img.src = "./image/image-game/hand-delete.png";
+    img.src = "image/image-game/hand-delete.png";
   }
 });
 
@@ -124,7 +124,7 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
       currentMainLeft += betLeft;
       betMainLeft.textContent = currentMainLeft.toLocaleString();
       clone.remove();
-      elBetMoneyLeft.innerHTML = `<img src="./image/image-game/cuoc.png" class="position-absolute">`;
+      elBetMoneyLeft.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     }, 600);
   }
 
@@ -151,7 +151,7 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
       currentMainRight += betRight;
       betMainRight.textContent = currentMainRight.toLocaleString();
       clone.remove();
-      elBetMoneyRight.innerHTML = `<img src="./image/image-game/cuoc.png" class="position-absolute">`;
+      elBetMoneyRight.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     }, 600);
   }
 
@@ -182,8 +182,8 @@ document.querySelector(".btn-cancel").addEventListener("click", () => {
   money.textContent = userLogin.assets.toLocaleString(); // Cập nhật số dư tài khoản
 
   // Xóa tiền cược trên giao diện (thay ảnh hoặc nội dung khác)
-  elBetMoneyLeft.innerHTML = `<img src="./image/image-game/cuoc.png" class="position-absolute">`;
-  elBetMoneyRight.innerHTML = `<img src="./image/image-game/cuoc.png" class="position-absolute">`;
+  elBetMoneyLeft.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
+  elBetMoneyRight.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
 
   // Reset lại trạng thái cược bên trái và bên phải
   currentBetSide = null;
@@ -200,12 +200,12 @@ let isGameRunning = false;
 
 // Các hình ảnh xúc xắc
 const diceImages = [
-  "./image/image-game/dor1.png",
-  "./image/image-game/dor2.png",
-  "./image/image-game/dor3.png",
-  "./image/image-game/dor4.png",
-  "./image/image-game/dor5.png",
-  "./image/image-game/dor6.png",
+  "image/image-game/dor1.png",
+  "image/image-game/dor2.png",
+  "image/image-game/dor3.png",
+  "image/image-game/dor4.png",
+  "image/image-game/dor5.png",
+  "image/image-game/dor6.png",
 ];
 
 // Thêm style vào head để định nghĩa các animation
@@ -528,11 +528,11 @@ function updateResultHistory(result) {
   const newImg = document.createElement("img");
   
   if (result === "Xỉu") {
-    newImg.src = "./image/image-game/dot.tai.png";
+    newImg.src = "image/image-game/dot.tai.png";
     newImg.style.width = "17px"; // Giữ nguyên style như các hình ảnh Tài hiện có
     newImg.style.marginRight="5px"
   } else {
-    newImg.src = "./image/image-game/dot.xiu.png";
+    newImg.src = "image/image-game/dot.xiu.png";
     newImg.style.marginRight="5px"
     // Không cần thêm style width cho hình ảnh Xỉu (dùng kích thước mặc định)
   }
