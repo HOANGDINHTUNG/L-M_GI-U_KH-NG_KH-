@@ -161,3 +161,17 @@ carouselItem.addEventListener('click',()=>{
     `
   }
 })
+
+function returnHome(){
+  // Cập nhật userList trước khi chuyển trang
+  let updatedUserList = userList.map((u) => {
+    if (u.name === userLogin.name) {
+      return { ...u, ...userLogin }; // Gộp thông tin mới từ userLogin
+    }
+    return u;
+  });
+
+  saveDataToLocal("userList",updatedUserList)
+
+  window.location.href="index.html"
+}

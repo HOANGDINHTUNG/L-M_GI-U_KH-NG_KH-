@@ -48,7 +48,7 @@ function register(event) {
     userList.push(data)
 
     /* lưu dữ liệu lên local */
-    saveUserListToLocal(userList)
+    saveDataToLocal("userList",userList)
     alert("Đăng ký thành công")
     /* chuyển qua trang đăng nhập */
     container.classList.remove("right-panel-active");
