@@ -214,6 +214,33 @@ body {
   }
 }
 
+//hien thị người chơi ảo
+.total-players-even{
+  position: absolute;
+  top:202px;
+  left:290px;
+  height: 15px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #ffe100;
+}
+
+.total-players-odd{
+  position: absolute;
+  top:202px;
+  right:290px;
+  height: 15px;
+  width: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: #ffe100;
+}
+
 .el-even img,
 .el-odd img {
   width: 140px;
@@ -255,15 +282,25 @@ body {
 
 .el-bet-main-right {
   position: absolute;
-  bottom: 200px;
-  right: 170px;
+  bottom: 205px;
+  right: 130px;
+  width: 200px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 6;
 }
 
 .el-bet-main-left {
   position: absolute;
-  bottom: 200px;
-  left: 170px;
+  bottom: 205px;
+  left: 130px;
+  width: 200px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   z-index: 6;
 }
 

@@ -4,22 +4,21 @@ let containerBet = document.querySelector(".container-bet");
 
 // Hàm tải thông tin tài khoản người dùng từ localStorage
 function loadUserData() {
-  userLogin=loadFromLocalStorage("userLogin",userLogin)
-  
+  userLogin = loadFromLocalStorage("userLogin", userLogin);
+
   if (userLogin) {
     // Cập nhật thông tin người dùng từ dữ liệu đã lưu
     userLogin.assets = userLogin.assets;
-    
+
     // Cập nhật hiển thị trên giao diện
     const money = document.querySelector(".money");
     if (money) {
       money.textContent = userLogin.assets.toLocaleString();
     }
   } else {
-    alert('Không tìm thấy dữ liệu người dùng đã lưu');
+    alert("Không tìm thấy dữ liệu người dùng đã lưu");
   }
 }
-
 
 const money = document.querySelector(".money");
 money.textContent = `${userLogin.assets.toLocaleString()}`;
@@ -55,18 +54,105 @@ function showInputBetLeft() {
   containerBet.style.visibility = "visible";
 }
 
-// đổi icon
+// Xử lý nút hand-delete để dừng việc đặt cược
 const btnHandDelete = document.querySelector(".btn-hand-delete");
+let bettingEnabled = true; // Biến để kiểm soát trạng thái đặt cược
+let pendingRefund = false; // Biến kiểm soát trạng thái hoàn tiền sau ván 
 btnHandDelete.addEventListener("click", () => {
   const img = btnHandDelete.querySelector("img");
   // Lấy tên file cuối cùng trong đường dẫn ảnh
   const fileName = img.src.split("/").pop();
+
   if (fileName === "hand-delete.png") {
+    // Chuyển sang chế độ không cho phép đặt cược
     img.src = "image/image-game/hand.png";
+    bettingEnabled = false;
+
+    // Không hoàn tiền ngay lập tức mà chỉ vô hiệu hóa các nút đặt cược
+    pendingRefund = true;
+
+    // Vô hiệu hóa các nút đặt cược
+    disableBettingButtons();
   } else {
+    // Cho phép đặt cược trở lại
     img.src = "image/image-game/hand-delete.png";
+    bettingEnabled = true;
+    pendingRefund = false;
+
+    // Kích hoạt lại các nút đặt cược
+    enableBettingButtons();
   }
 });
+
+// Hàm vô hiệu hóa các nút đặt cược
+function disableBettingButtons() {
+  // Vô hiệu hóa nút đặt cược bên trái và phải
+  elBetMoneyLeft.style.pointerEvents = "none";
+  elBetMoneyRight.style.pointerEvents = "none";
+
+  // Vô hiệu hóa các nút mệnh giá
+  const amountButtons = document.querySelectorAll("[data-amount]");
+  amountButtons.forEach((btn) => {
+    btn.style.pointerEvents = "none";
+    btn.style.opacity = "0.5";
+  });
+
+  // Vô hiệu hóa nút X2 và nút Đặt cược
+  document.querySelector(".btn-x2").style.pointerEvents = "none";
+  document.querySelector(".btn-x2").style.opacity = "0.5";
+  document.querySelector(".btn-bet").style.pointerEvents = "none";
+  document.querySelector(".btn-bet").style.opacity = "0.5";
+}
+
+// Hàm kích hoạt lại các nút đặt cược
+function enableBettingButtons() {
+  // Kích hoạt nút đặt cược bên trái và phải
+  elBetMoneyLeft.style.pointerEvents = "auto";
+  elBetMoneyRight.style.pointerEvents = "auto";
+
+  // Kích hoạt các nút mệnh giá
+  const amountButtons = document.querySelectorAll("[data-amount]");
+  amountButtons.forEach((btn) => {
+    btn.style.pointerEvents = "auto";
+    btn.style.opacity = "1";
+  });
+
+  // Kích hoạt nút X2 và nút Đặt cược
+  document.querySelector(".btn-x2").style.pointerEvents = "auto";
+  document.querySelector(".btn-x2").style.opacity = "1";
+  document.querySelector(".btn-bet").style.pointerEvents = "auto";
+  document.querySelector(".btn-bet").style.opacity = "1";
+}
+
+// Thêm hàm mới để hoàn lại tiền đã đặt cược
+function refundPlacedBets() {
+  // Lấy tiền cược từ mỗi bên
+  const betMainLeftElement = document.querySelector(".el-bet-main-left span");
+  const betMainRightElement = document.querySelector(".el-bet-main-right span");
+
+  let refundAmount = 0;
+
+  // Tính tổng tiền cược đã đặt
+  if (betMainLeftElement && betMainLeftElement.textContent) {
+    refundAmount += parseInt(betMainLeftElement.textContent.replace(/,/g, "")) || 0;
+  }
+
+  if (betMainRightElement && betMainRightElement.textContent) {
+    refundAmount += parseInt(betMainRightElement.textContent.replace(/,/g, "")) || 0;
+  }
+
+  // Hoàn trả tiền vào tài khoản người dùng
+  if (refundAmount > 0) {
+    userLogin.assets += refundAmount;
+    money.textContent = userLogin.assets.toLocaleString();
+
+    // Lưu dữ liệu
+    saveDataToLocal("userLogin", userLogin);
+
+    // Thông báo hoàn tiền
+    alert(`Đã hoàn lại ${refundAmount.toLocaleString()} đồng tiền cược.`);
+  }
+}
 
 // Xử lý nút nhân đôi tiền cược (X2)
 const btnX2 = document.querySelector(".btn-x2");
@@ -167,7 +253,7 @@ amountButtons.forEach((btn) => {
     money.textContent = userLogin.assets.toLocaleString();
 
     // Lưu dữ liệu
-    saveDataToLocal("userLogin", userLogin)
+    saveDataToLocal("userLogin", userLogin);
   });
 });
 
@@ -243,7 +329,7 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
   currentBetSide = null;
 
   // Sau khi đặt cược xong, bắt đầu trò chơi
-  saveDataToLocal("userLogin", userLogin)
+  saveDataToLocal("userLogin", userLogin);
   startDiceGame();
 });
 
@@ -274,7 +360,7 @@ document.querySelector(".btn-cancel").addEventListener("click", () => {
   // Reset lại trạng thái cược bên trái và bên phải
   currentBetSide = null;
 
-  saveDataToLocal("userLogin", userLogin)
+  saveDataToLocal("userLogin", userLogin);
   alert(`Số tiền cược đã được hoàn lại: ${refund.toLocaleString()} đồng.`);
 });
 
@@ -392,9 +478,13 @@ function getFixedDicePosition(index, diceSize = 60, containerWidth = 200, contai
 
 const evenEl = document.getElementById("sumEven");
 const oddEl = document.getElementById("sumOdd");
+const evenPlayer = document.querySelector(".total-players-even");
+const oddPlayer = document.querySelector(".total-players-odd");
 
 let evenTotal = 0;
 let oddTotal = 0;
+let evenPlayerNumber = 0;
+let oddPlayerNumber = 0;
 let timer = null;
 const duration = 20; // đếm trong 5 giây
 let timePassed = 0;
@@ -418,6 +508,8 @@ function numberToImage(number, container) {
 function startRandomCounter() {
   evenTotal = 0;
   oddTotal = 0;
+  evenPlayerNumber = 0;
+  oddPlayerNumber = 0;
   numberToImage(evenTotal, evenEl);
   numberToImage(oddTotal, oddEl);
   timePassed = 0;
@@ -440,6 +532,15 @@ function startRandomCounter() {
     numberToImage(evenTotal, evenEl);
     numberToImage(oddTotal, oddEl);
 
+    // Random người chơi
+    const randPlayerEven = Math.floor(Math.random() * 91) + 10;
+    const randPlayerOdd = Math.floor(Math.random() * 91) + 10;
+
+    evenPlayerNumber += randPlayerEven;
+    oddPlayerNumber += randPlayerOdd;
+
+    evenPlayer.textContent = evenPlayerNumber;
+    oddPlayer.textContent = oddPlayerNumber;
     timePassed++;
   }, 1000);
 }
@@ -470,6 +571,9 @@ function startDiceGame() {
     countdownElement.classList.remove("time-end");
   }
 
+  // Kích hoạt lại các nút đặt cược khi bắt đầu ván mới
+  enableBettingButtons();
+
   const countdownTimer = setInterval(() => {
     timeLeft--;
     countdownElement.textContent = timeLeft;
@@ -477,6 +581,8 @@ function startDiceGame() {
     // Thêm hiệu ứng màu đỏ khi thời gian còn ít
     if (timeLeft <= 3) {
       countdownElement.classList.add("time-end");
+      // Vô hiệu hóa các nút khi còn 3 giây
+      disableBettingButtons();
     }
 
     if (timeLeft <= 0) {
@@ -737,8 +843,13 @@ function removeWinnerEffects() {
   glowOverlays.forEach((overlay) => overlay.remove());
 }
 
-// Xử lý kết quả cược
+// Chỉnh sửa hàm xử lý kết quả cược để không xử lý kết quả khi pendingRefund = true
 function handleBetResult(result) {
+  // Nếu có yêu cầu hoàn tiền đang chờ, không xử lý kết quả thắng thua
+  if (pendingRefund) {
+    return;
+  }
+
   // Lấy tiền cược từ mỗi bên
   const betLeftElement = document.querySelector(".el-bet-main-left span");
   const betRightElement = document.querySelector(".el-bet-main-right span");
@@ -763,7 +874,7 @@ function handleBetResult(result) {
     money.textContent = userLogin.assets.toLocaleString();
 
     // Lưu dữ liệu sau khi cập nhật số tiền
-    saveDataToLocal("userLogin", userLogin)
+    saveDataToLocal("userLogin", userLogin);
 
     // Thông báo thắng
     setTimeout(() => {
@@ -777,14 +888,21 @@ function handleBetResult(result) {
   }
 
   // Xóa số tiền cược hiển thị trên giao diện
-  if (betLeftElement) betLeftElement.textContent = "";
-  if (betRightElement) betRightElement.textContent = "";
+  if (betLeftElement) betLeftElement.textContent = "0";
+  if (betRightElement) betRightElement.textContent = "0";
 }
 
-// Hàm reset trạng thái trò chơi
+// Sửa lại hàm resetGameState để xử lý hoàn tiền sau khi ván kết thúc
 function resetGameState() {
   isGameRunning = false;
   diceBox.innerHTML = "";
+
+  // Nếu có yêu cầu hoàn tiền đang chờ, thực hiện hoàn tiền
+  if (pendingRefund) {
+    // Hoàn lại tiền đã đặt cược
+    refundPlacedBets();
+    pendingRefund = false;
+  }
 
   // Kiểm tra xem người chơi còn đủ tiền để chơi tiếp không
   const moneyDisplay = document.querySelector(".money");
@@ -796,11 +914,41 @@ function resetGameState() {
     }
   }
 
-  // Sẵn sàng cho ván tiếp theo - có thể tự động bắt đầu sau một khoảng thời gian
+  // Reset tổng tiền cược khi qua ván mới
+  const betMainLeftElement = document.querySelector(".el-bet-main-left span");
+  const betMainRightElement = document.querySelector(".el-bet-main-right span");
+
+  if (betMainLeftElement) betMainLeftElement.textContent = "0";
+  if (betMainRightElement) betMainRightElement.textContent = "0";
+
+  // Reset tiền cược đang chọn
+  elBetMoneyLeft.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
+  elBetMoneyRight.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
+  currentBetSide = null;
+
+  // Reset tổng tiền và người chơi
+  evenTotal = 0;
+  oddTotal = 0;
+
+  // Sẵn sàng cho ván tiếp theo
   setTimeout(() => {
+    // Nếu chế độ đặt cược đang bị tắt, bật lại các nút đặt cược
+    if (!bettingEnabled) {
+      bettingEnabled = true;
+      enableBettingButtons();
+      // Đổi lại icon tay
+      const img = btnHandDelete.querySelector("img");
+      img.src = "image/image-game/hand-delete.png";
+    }
+
+    // Bắt đầu ván mới
     startDiceGame();
     evenTotal = 0;
     oddTotal = 0;
+    evenPlayerNumber = 0;
+    oddPlayerNumber = 0;
+    evenPlayer.textContent = "0";
+    oddPlayer.textContent = "0";
     startRandomCounter();
   }, 3000);
 }
