@@ -273,7 +273,7 @@ amountButtons.forEach((btn) => {
     currentAmount += 1000 - 1000;
 
     // Hiển thị lại với dấu phẩy
-    betDisplay.textContent = currentAmount.toLocaleString("en-US");
+    betDisplay.textContent = currentAmount.toLocaleString("vi-VN");
 
     if (amount > userLogin.assets) {
       alert("Không đủ tiền để cược số này!");
@@ -331,7 +331,7 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
     setTimeout(() => {
       currentMainLeft += betLeft;
       evenTotal += betLeft;
-      betMainLeft.textContent = currentMainLeft.toLocaleString("en-US");
+      betMainLeft.textContent = currentMainLeft.toLocaleString("vi-VN");
       clone.remove();
       elBetMoneyLeft.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     }, 600);
@@ -359,7 +359,7 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
     setTimeout(() => {
       currentMainRight += betRight;
       oddTotal += betRight;
-      betMainRight.textContent = currentMainRight.toLocaleString("en-US");
+      betMainRight.textContent = currentMainRight.toLocaleString("vi-VN");
       clone.remove();
       elBetMoneyRight.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     }, 600);
@@ -530,10 +530,10 @@ let timePassed = 0;
 
 function numberToImage(number, container) {
   container.innerHTML = "";
-  const str = number.toLocaleString("en-US"); // VD: 123,456,789
+  const str = number.toLocaleString("vi-VN"); // VD: 123,456,789
   for (let char of str) {
     const img = document.createElement("img");
-    if (char === ",") {
+    if (char === ".") {
       img.src = "./image/image-game/,.png";
       img.style.width = "9px";
       img.style.alignSelf = "flex-end";
