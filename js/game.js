@@ -29,6 +29,12 @@ username.textContent = `${userLogin.name}`;
 let currentBetSide = null;
 const MAX_BET = 9999999999; // Giới hạn tổng số tiền cược
 
+// Tạo biến để lưu trạng thái tiền đặt cược chưa được xác nhận
+let unconfirmedBets = {
+  left: 0,
+  right: 0
+};
+
 // Ghi nhận bên cược
 function showInputBetRight() {
   currentBetSide = "right";
@@ -84,6 +90,31 @@ btnHandDelete.addEventListener("click", () => {
   }
 });
 
+// Thêm hàm mới để hoàn lại tiền cược chưa xác nhận
+function refundUnconfirmedBets() {
+  const totalRefund = unconfirmedBets.left + unconfirmedBets.right;
+  
+  if (totalRefund > 0) {
+    // Hoàn lại tiền vào tài khoản người dùng
+    userLogin.assets += totalRefund;
+    money.textContent = userLogin.assets.toLocaleString();
+    
+    // Xóa tiền cược hiển thị trên giao diện
+    elBetMoneyLeft.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
+    elBetMoneyRight.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
+    
+    // Lưu dữ liệu người dùng sau khi cập nhật
+    saveDataToLocal("userLogin", userLogin);
+    
+    // Reset biến lưu tiền cược chưa xác nhận
+    unconfirmedBets.left = 0;
+    unconfirmedBets.right = 0;
+    
+    // Reset biến lưu bên đang đặt cược
+    currentBetSide = null;
+  }
+}
+
 // Hàm vô hiệu hóa các nút đặt cược
 function disableBettingButtons() {
   // Vô hiệu hóa nút đặt cược bên trái và phải
@@ -102,6 +133,16 @@ function disableBettingButtons() {
   document.querySelector(".btn-x2").style.opacity = "0.5";
   document.querySelector(".btn-bet").style.pointerEvents = "none";
   document.querySelector(".btn-bet").style.opacity = "0.5";
+  
+  // Thu thập tiền cược chưa được xác nhận
+  const spanLeft = elBetMoneyLeft.querySelector("span");
+  const spanRight = elBetMoneyRight.querySelector("span");
+  
+  unconfirmedBets.left = spanLeft ? parseInt(spanLeft.textContent.replace(/,/g, "")) || 0 : 0;
+  unconfirmedBets.right = spanRight ? parseInt(spanRight.textContent.replace(/,/g, "")) || 0 : 0;
+  
+  // Nếu có tiền cược chưa xác nhận, thực hiện hoàn tiền
+  refundUnconfirmedBets();
 }
 
 // Hàm kích hoạt lại các nút đặt cược
@@ -149,8 +190,6 @@ function refundPlacedBets() {
     // Lưu dữ liệu
     saveDataToLocal("userLogin", userLogin);
 
-    // Thông báo hoàn tiền
-    alert(`Đã hoàn lại ${refundAmount.toLocaleString()} đồng tiền cược.`);
   }
 }
 
@@ -549,6 +588,12 @@ function startRandomCounter() {
 function startDiceGame() {
   if (isGameRunning) return;
   isGameRunning = true;
+
+  // Reset biến lưu tiền cược chưa xác nhận
+  unconfirmedBets = {
+    left: 0,
+    right: 0
+  };
 
   const plate = document.getElementById("plate");
   plate.style.display = "block";
