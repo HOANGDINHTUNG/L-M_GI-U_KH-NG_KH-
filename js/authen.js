@@ -1,86 +1,83 @@
-const signUpButton = document.getElementById('signUp');
-const signInButton = document.getElementById('signIn');
-const container = document.getElementById('container');
+const signUpButton = document.getElementById("signUp");
+const signInButton = document.getElementById("signIn");
+const container = document.getElementById("container");
 
-signUpButton.addEventListener('click', () => {
-	container.classList.add("right-panel-active");
+signUpButton.addEventListener("click", () => {
+  container.classList.add("right-panel-active");
 });
 
-signInButton.addEventListener('click', () => {
-	container.classList.remove("right-panel-active");
+signInButton.addEventListener("click", () => {
+  container.classList.remove("right-panel-active");
 });
-
 
 function authenCheck() {
-    if(localStorage.getItem("userLogin")) {
-        window.location.href = "/"
-    }
+  if (localStorage.getItem("userLogin")) {
+    window.location.href = "/index.html";
+  }
 }
-authenCheck()
-
-
+authenCheck();
 
 function register(event) {
-    event.preventDefault()
-    // if(!confirm("Bạn xác nhận các thông tin là chính xác chưa?"))  return
+  let userList = JSON.parse(localStorage.getItem("userList"));
 
-    let formRegisterEL = event.target
-    /* lấy dữ liệu của form đăng ký */
-    let data = getFormData(formRegisterEL)
+  event.preventDefault();
+  // if(!confirm("Bạn xác nhận các thông tin là chính xác chưa?"))  return
 
-    if(!validateEmail(data.email)) {
-        alert("email chưa đúng định dạng")
-        return
-    }
-    /* validate name */
-    /* tài khoản đã tồn tại hay chưa */
-    if(userList.find((userF) => userF.name == data.name)) {
-        alert("Tên tài khoản đã tồn tại")
-        return
-    }
-    if(data.password!=data.passwordConfirm){
-        alert("Mật khẩu không khớp")
-        return
-    }
-    /* thêm dữ liệu vừa đăng ký vào danh sách */
-    data.role = "USER"
-    data.assets = "1000000"
-    userList.push(data)
+  let formRegisterEL = event.target;
+  /* lấy dữ liệu của form đăng ký */
+  let data = getFormData(formRegisterEL);
 
-    /* lưu dữ liệu lên local */
-    saveDataToLocal("userList",userList)
-    alert("Đăng ký thành công")
-    /* chuyển qua trang đăng nhập */
-    container.classList.remove("right-panel-active");
+  if (!validateEmail(data.email)) {
+    alert("email chưa đúng định dạng");
+    return;
+  }
+  /* validate name */
+  /* tài khoản đã tồn tại hay chưa */
+  if (userList.find((userF) => userF.name == data.name)) {
+    alert("Tên tài khoản đã tồn tại");
+    return;
+  }
+  if (data.password != data.passwordConfirm) {
+    alert("Mật khẩu không khớp");
+    return;
+  }
+  /* thêm dữ liệu vừa đăng ký vào danh sách */
+  data.role = "USER";
+  data.assets = "1000000";
+  userList.push(data);
 
-    /* xoá hết dữ liệu trong form đăng ký */
-    formRegisterEL.reset()
+  /* lưu dữ liệu lên local */
+  localStorage.setItem("userList", JSON.stringify(userList));
+  alert("Đăng ký thành công");
+  /* chuyển qua trang đăng nhập */
+  container.classList.remove("right-panel-active");
+
+  /* xoá hết dữ liệu trong form đăng ký */
+  formRegisterEL.reset();
 }
-
 
 function login(event) {
-    event.preventDefault()
+  let userList = JSON.parse(localStorage.getItem("userList"));
+  event.preventDefault();
 
-    /* lấy element của form login */
-    let formLoginEL = event.target 
+  /* lấy element của form login */
+  let formLoginEL = event.target;
 
-    /* lấy dữ liệu của form */
-    let data = getFormData(formLoginEL)
+  /* lấy dữ liệu của form */
+  let data = getFormData(formLoginEL);
 
+  let userData = userList.find((userF) => userF.name == data.name);
 
-    let userData = userList.find(userF => userF.name == data.name)
+  if (!userData) {
+    alert("Người dùng không tồn tại");
+    return;
+  }
 
-    if(!userData) {
-        alert("Người dùng không tồn tại")
-        return
-    }
+  if (userData.password != data.password) {
+    alert("mật khẩu không chính xác");
+    return;
+  }
 
-    if(userData.password != data.password) {
-        alert("mật khẩu không chính xác")
-        return
-    }
-
-    localStorage.setItem("userLogin", JSON.stringify(userData))
-    window.location.href = "/"
+  localStorage.setItem("userLogin", JSON.stringify(userData));
+  window.location.href = "/index.html";
 }
-

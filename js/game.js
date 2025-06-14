@@ -4,8 +4,7 @@ let containerBet = document.querySelector(".container-bet");
 
 // Hàm tải thông tin tài khoản người dùng từ localStorage
 function loadUserData() {
-  userLogin = loadFromLocalStorage("userLogin", userLogin);
-
+  localStorage.setItem("userLogin", JSON.stringify(userLogin));
   if (userLogin) {
     // Cập nhật thông tin người dùng từ dữ liệu đã lưu
     userLogin.assets = userLogin.assets;
@@ -32,7 +31,7 @@ const MAX_BET = 9999999999; // Giới hạn tổng số tiền cược
 // Tạo biến để lưu trạng thái tiền đặt cược chưa được xác nhận
 let unconfirmedBets = {
   left: 0,
-  right: 0
+  right: 0,
 };
 
 // Ghi nhận bên cược
@@ -63,7 +62,7 @@ function showInputBetLeft() {
 // Xử lý nút hand-delete để dừng việc đặt cược
 const btnHandDelete = document.querySelector(".btn-hand-delete");
 let bettingEnabled = true; // Biến để kiểm soát trạng thái đặt cược
-let pendingRefund = false; // Biến kiểm soát trạng thái hoàn tiền sau ván 
+let pendingRefund = false; // Biến kiểm soát trạng thái hoàn tiền sau ván
 btnHandDelete.addEventListener("click", () => {
   const img = btnHandDelete.querySelector("img");
   // Lấy tên file cuối cùng trong đường dẫn ảnh
@@ -93,23 +92,23 @@ btnHandDelete.addEventListener("click", () => {
 // Thêm hàm mới để hoàn lại tiền cược chưa xác nhận
 function refundUnconfirmedBets() {
   const totalRefund = unconfirmedBets.left + unconfirmedBets.right;
-  
+
   if (totalRefund > 0) {
     // Hoàn lại tiền vào tài khoản người dùng
     userLogin.assets += totalRefund;
     money.textContent = userLogin.assets.toLocaleString();
-    
+
     // Xóa tiền cược hiển thị trên giao diện
     elBetMoneyLeft.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     elBetMoneyRight.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
-    
+
     // Lưu dữ liệu người dùng sau khi cập nhật
-    saveDataToLocal("userLogin", userLogin);
-    
+    localStorage.setItem("userLogin", JSON.stringify(userLogin));
+
     // Reset biến lưu tiền cược chưa xác nhận
     unconfirmedBets.left = 0;
     unconfirmedBets.right = 0;
-    
+
     // Reset biến lưu bên đang đặt cược
     currentBetSide = null;
   }
@@ -133,14 +132,18 @@ function disableBettingButtons() {
   document.querySelector(".btn-x2").style.opacity = "0.5";
   document.querySelector(".btn-bet").style.pointerEvents = "none";
   document.querySelector(".btn-bet").style.opacity = "0.5";
-  
+
   // Thu thập tiền cược chưa được xác nhận
   const spanLeft = elBetMoneyLeft.querySelector("span");
   const spanRight = elBetMoneyRight.querySelector("span");
-  
-  unconfirmedBets.left = spanLeft ? parseInt(spanLeft.textContent.replace(/,/g, "")) || 0 : 0;
-  unconfirmedBets.right = spanRight ? parseInt(spanRight.textContent.replace(/,/g, "")) || 0 : 0;
-  
+
+  unconfirmedBets.left = spanLeft
+    ? parseInt(spanLeft.textContent.replace(/,/g, "")) || 0
+    : 0;
+  unconfirmedBets.right = spanRight
+    ? parseInt(spanRight.textContent.replace(/,/g, "")) || 0
+    : 0;
+
   // Nếu có tiền cược chưa xác nhận, thực hiện hoàn tiền
   refundUnconfirmedBets();
 }
@@ -175,11 +178,13 @@ function refundPlacedBets() {
 
   // Tính tổng tiền cược đã đặt
   if (betMainLeftElement && betMainLeftElement.textContent) {
-    refundAmount += parseInt(betMainLeftElement.textContent.replace(/,/g, "")) || 0;
+    refundAmount +=
+      parseInt(betMainLeftElement.textContent.replace(/,/g, "")) || 0;
   }
 
   if (betMainRightElement && betMainRightElement.textContent) {
-    refundAmount += parseInt(betMainRightElement.textContent.replace(/,/g, "")) || 0;
+    refundAmount +=
+      parseInt(betMainRightElement.textContent.replace(/,/g, "")) || 0;
   }
 
   // Hoàn trả tiền vào tài khoản người dùng
@@ -188,8 +193,7 @@ function refundPlacedBets() {
     money.textContent = userLogin.assets.toLocaleString();
 
     // Lưu dữ liệu
-    saveDataToLocal("userLogin", userLogin);
-
+    localStorage.setItem("userLogin", JSON.stringify(userLogin));
   }
 }
 
@@ -235,8 +239,8 @@ btnX2.addEventListener("click", () => {
   userLogin.assets -= additionalBet;
   money.textContent = userLogin.assets.toLocaleString();
 
-  // Lưu dữ liệu
-  saveDataToLocal("userLogin", userLogin);
+  // Lưu dữ liệ
+  localStorage.setItem("userLogin", JSON.stringify(userLogin));
 
   // Cập nhật hiển thị số tiền cược
   betDisplay.textContent = doubledAmount.toLocaleString();
@@ -272,8 +276,8 @@ amountButtons.forEach((btn) => {
     // (tuỳ chọn) Cộng thêm, trừ bớt...
     currentAmount += 1000 - 1000;
 
-    // Hiển thị lại với dấu phẩy
-    betDisplay.textContent = currentAmount.toLocaleString("vi-VN");
+    // Hiển thị lại với dấu phẩy - Sửa dòng này
+    betDisplay.textContent = currentAmount.toLocaleString(); // Sửa từ "vi-VN" thành không tham số
 
     if (amount > userLogin.assets) {
       alert("Không đủ tiền để cược số này!");
@@ -286,13 +290,13 @@ amountButtons.forEach((btn) => {
     }
 
     currentAmount += amount;
-    betDisplay.textContent = currentAmount.toLocaleString();
+    betDisplay.textContent = currentAmount.toLocaleString(); // Sửa từ "vi-VN" thành không tham số
 
     userLogin.assets -= amount;
     money.textContent = userLogin.assets.toLocaleString();
 
     // Lưu dữ liệu
-    saveDataToLocal("userLogin", userLogin);
+    localStorage.setItem("userLogin", JSON.stringify(userLogin));
   });
 });
 
@@ -301,8 +305,12 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
   const spanLeft = elBetMoneyLeft.querySelector("span");
   const spanRight = elBetMoneyRight.querySelector("span");
 
-  const betLeft = spanLeft ? parseInt(spanLeft.textContent.replace(/,/g, "")) : 0;
-  const betRight = spanRight ? parseInt(spanRight.textContent.replace(/,/g, "")) : 0;
+  const betLeft = spanLeft
+    ? parseInt(spanLeft.textContent.replace(/,/g, ""))
+    : 0;
+  const betRight = spanRight
+    ? parseInt(spanRight.textContent.replace(/,/g, ""))
+    : 0;
 
   if (betLeft === 0 && betRight === 0) {
     alert("Bạn chưa đặt cược!");
@@ -312,7 +320,8 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
   // Xử lý bên Chẵn (Left)
   if (betLeft > 0) {
     const betMainLeft = document.querySelector(".el-bet-main-left span");
-    let currentMainLeft = parseInt(betMainLeft.textContent.replace(/,/g, "")) || 0;
+    let currentMainLeft =
+      parseInt(betMainLeft.textContent.replace(/,/g, "")) || 0;
 
     let clone = spanLeft.cloneNode(true);
     clone.style.position = "absolute";
@@ -331,7 +340,7 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
     setTimeout(() => {
       currentMainLeft += betLeft;
       evenTotal += betLeft;
-      betMainLeft.textContent = currentMainLeft.toLocaleString("vi-VN");
+      betMainLeft.textContent = currentMainLeft.toLocaleString(); // Sửa từ "vi-VN" thành không tham số
       clone.remove();
       elBetMoneyLeft.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     }, 600);
@@ -340,7 +349,8 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
   // Xử lý bên Lẻ (Right)
   if (betRight > 0) {
     const betMainRight = document.querySelector(".el-bet-main-right span");
-    let currentMainRight = parseInt(betMainRight.textContent.replace(/,/g, "")) || 0;
+    let currentMainRight =
+      parseInt(betMainRight.textContent.replace(/,/g, "")) || 0;
 
     let clone = spanRight.cloneNode(true);
     clone.style.position = "absolute";
@@ -359,7 +369,7 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
     setTimeout(() => {
       currentMainRight += betRight;
       oddTotal += betRight;
-      betMainRight.textContent = currentMainRight.toLocaleString("vi-VN");
+      betMainRight.textContent = currentMainRight.toLocaleString(); // Sửa từ "vi-VN" thành không tham số
       clone.remove();
       elBetMoneyRight.innerHTML = `<img src="image/image-game/cuoc.png" class="position-absolute">`;
     }, 600);
@@ -367,8 +377,8 @@ document.querySelector(".btn-bet").addEventListener("click", () => {
 
   currentBetSide = null;
 
-  // Sau khi đặt cược xong, bắt đầu trò chơi
-  saveDataToLocal("userLogin", userLogin);
+  // Sau khi đặt cược xong, bắt đầu trò chơ
+  localStorage.setItem("userLogin", JSON.stringify(userLogin));
   startDiceGame();
 });
 
@@ -398,8 +408,7 @@ document.querySelector(".btn-cancel").addEventListener("click", () => {
 
   // Reset lại trạng thái cược bên trái và bên phải
   currentBetSide = null;
-
-  saveDataToLocal("userLogin", userLogin);
+  localStorage.setItem("userLogin", JSON.stringify(userLogin));
   alert(`Số tiền cược đã được hoàn lại: ${refund.toLocaleString()} đồng.`);
 });
 
@@ -499,11 +508,19 @@ function getRandomDiceValue() {
   return Math.floor(Math.random() * 6) + 1;
 }
 
-function getFixedDicePosition(index, diceSize = 60, containerWidth = 200, containerHeight = 150) {
+function getFixedDicePosition(
+  index,
+  diceSize = 60,
+  containerWidth = 200,
+  containerHeight = 150
+) {
   const fixedPositions = [
-    {x: 20, y: 20},
-    {x: containerWidth - diceSize - 20, y: 20},
-    {x: containerWidth / 2 - diceSize / 2, y: containerHeight - diceSize - 20},
+    { x: 20, y: 20 },
+    { x: containerWidth - diceSize - 20, y: 20 },
+    {
+      x: containerWidth / 2 - diceSize / 2,
+      y: containerHeight - diceSize - 20,
+    },
     // Thêm vị trí nữa nếu bạn có nhiều xúc xắc hơn
   ];
 
@@ -562,8 +579,12 @@ function startRandomCounter() {
     }
 
     // Random từ 100 triệu đến 1 tỷ
-    const randEven = Math.floor(Math.random() * (1_000_000_000 - 100_000_000 + 1)) + 100_000_000;
-    const randOdd = Math.floor(Math.random() * (1_000_000_000 - 100_000_000 + 1)) + 100_000_000;
+    const randEven =
+      Math.floor(Math.random() * (1_000_000_000 - 100_000_000 + 1)) +
+      100_000_000;
+    const randOdd =
+      Math.floor(Math.random() * (1_000_000_000 - 100_000_000 + 1)) +
+      100_000_000;
 
     evenTotal += randEven;
     oddTotal += randOdd;
@@ -592,7 +613,7 @@ function startDiceGame() {
   // Reset biến lưu tiền cược chưa xác nhận
   unconfirmedBets = {
     left: 0,
-    right: 0
+    right: 0,
   };
 
   const plate = document.getElementById("plate");
@@ -681,11 +702,18 @@ function showDice() {
   }
 
   // Kết quả cuối cùng của xúc xắc
-  const finalDiceValues = [getRandomDiceValue(), getRandomDiceValue(), getRandomDiceValue()];
+  const finalDiceValues = [
+    getRandomDiceValue(),
+    getRandomDiceValue(),
+    getRandomDiceValue(),
+  ];
 
   const shakeInterval = setInterval(() => {
     diceContainers.forEach((container, index) => {
-      const diceValue = shakeCount < shakeTimes - 1 ? getRandomDiceValue() : finalDiceValues[index];
+      const diceValue =
+        shakeCount < shakeTimes - 1
+          ? getRandomDiceValue()
+          : finalDiceValues[index];
 
       container.innerHTML = "";
 
@@ -764,7 +792,13 @@ function showFinalDiceResults(diceResults, diceContainers) {
     const resultDisplay = document.createElement("div");
     resultDisplay.className = "dice-result";
     resultDisplay.innerHTML = `
-      <div class="${result === "Tài" ? "result-tai" : result === "Xỉu" ? "result-xiu" : "result-bo-ba"}">
+      <div class="${
+        result === "Tài"
+          ? "result-tai"
+          : result === "Xỉu"
+          ? "result-xiu"
+          : "result-bo-ba"
+      }">
         <h2>${result}</h2>
         <p>${totalPoints} điểm</p>
         <p>${diceResults.join(" + ")}</p>
@@ -783,7 +817,9 @@ function showFinalDiceResults(diceResults, diceContainers) {
     resultDisplay.style.zIndex = "200";
     resultDisplay.style.textAlign = "center";
     resultDisplay.style.animation = "fadeIn 0.5s, pulse 1s infinite alternate";
-    resultDisplay.style.textShadow = `0 0 10px ${result === "Tài" ? "#FF5722" : "#4CAF50"}`;
+    resultDisplay.style.textShadow = `0 0 10px ${
+      result === "Tài" ? "#FF5722" : "#4CAF50"
+    }`;
 
     diceBox.appendChild(resultDisplay);
 
@@ -849,7 +885,8 @@ function applyWinnerEffect(result) {
     glowOverlay.style.left = "0";
     glowOverlay.style.width = "100%";
     glowOverlay.style.height = "100%";
-    glowOverlay.style.background = "radial-gradient(circle, rgba(255, 87, 34, 0.4) 0%, rgba(255, 87, 34, 0) 70%)";
+    glowOverlay.style.background =
+      "radial-gradient(circle, rgba(255, 87, 34, 0.4) 0%, rgba(255, 87, 34, 0) 70%)";
     glowOverlay.style.animation = "pulse 1.5s infinite";
     glowOverlay.style.zIndex = "50";
     oddImage.parentElement.appendChild(glowOverlay);
@@ -865,7 +902,8 @@ function applyWinnerEffect(result) {
     glowOverlay.style.left = "0";
     glowOverlay.style.width = "100%";
     glowOverlay.style.height = "100%";
-    glowOverlay.style.background = "radial-gradient(circle, rgba(76, 175, 80, 0.4) 0%, rgba(76, 175, 80, 0) 70%)";
+    glowOverlay.style.background =
+      "radial-gradient(circle, rgba(76, 175, 80, 0.4) 0%, rgba(76, 175, 80, 0) 70%)";
     glowOverlay.style.animation = "pulse 1.5s infinite";
     glowOverlay.style.zIndex = "50";
     evenImage.parentElement.appendChild(glowOverlay);
@@ -884,7 +922,9 @@ function removeWinnerEffects() {
   oddImage.parentElement.classList.remove("winner-odd");
 
   // Xóa các lớp phủ ánh sáng
-  const glowOverlays = document.querySelectorAll(".el-even > div, .el-odd > div");
+  const glowOverlays = document.querySelectorAll(
+    ".el-even > div, .el-odd > div"
+  );
   glowOverlays.forEach((overlay) => overlay.remove());
 }
 
@@ -899,8 +939,12 @@ function handleBetResult(result) {
   const betLeftElement = document.querySelector(".el-bet-main-left span");
   const betRightElement = document.querySelector(".el-bet-main-right span");
 
-  const betLeft = betLeftElement ? parseInt(betLeftElement.textContent.replace(/,/g, "")) || 0 : 0;
-  const betRight = betRightElement ? parseInt(betRightElement.textContent.replace(/,/g, "")) || 0 : 0;
+  const betLeft = betLeftElement
+    ? parseInt(betLeftElement.textContent.replace(/,/g, "")) || 0
+    : 0;
+  const betRight = betRightElement
+    ? parseInt(betRightElement.textContent.replace(/,/g, "")) || 0
+    : 0;
 
   let winAmount = 0;
 
@@ -919,11 +963,15 @@ function handleBetResult(result) {
     money.textContent = userLogin.assets.toLocaleString();
 
     // Lưu dữ liệu sau khi cập nhật số tiền
-    saveDataToLocal("userLogin", userLogin);
+    localStorage.setItem("userLogin", JSON.stringify(userLogin));
 
     // Thông báo thắng
     setTimeout(() => {
-      alert(`Chúc mừng! Bạn đã thắng ${Math.floor(winAmount).toLocaleString()} đồng.`);
+      alert(
+        `Chúc mừng! Bạn đã thắng ${Math.floor(
+          winAmount
+        ).toLocaleString()} đồng.`
+      );
     }, 1500);
   } else if (betLeft > 0 || betRight > 0) {
     // Thông báo thua nếu có đặt cược
@@ -952,7 +1000,8 @@ function resetGameState() {
   // Kiểm tra xem người chơi còn đủ tiền để chơi tiếp không
   const moneyDisplay = document.querySelector(".money");
   if (moneyDisplay) {
-    const currentMoney = parseInt(moneyDisplay.textContent.replace(/\D/g, "")) || 0;
+    const currentMoney =
+      parseInt(moneyDisplay.textContent.replace(/\D/g, "")) || 0;
     if (currentMoney <= 0) {
       // Hiển thị thông báo hết tiền nếu cần
       alert("Bạn đã hết tiền! Vui lòng nạp thêm để tiếp tục chơi.");

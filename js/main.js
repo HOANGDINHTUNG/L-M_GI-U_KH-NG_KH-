@@ -9,18 +9,7 @@ let userList = [
   },
 ];
 
-//Khởi tạo vào localStorage
-function loadFromLocalStorage(key, defaultValue = []) {
-  let data = localStorage.getItem(key);
-  if (data) {
-    return JSON.parse(data); // Nếu đã có thì lấy ra
-  } else {
-    localStorage.setItem(key, JSON.stringify(defaultValue)); // Nếu chưa có thì lưu mặc định
-    return defaultValue;
-  }
-}
-
-userList=loadFromLocalStorage("userList",userList)
+localStorage.setItem("userList", JSON.stringify(userList));
 
 // làm lấy dữ liệu từ form (cụ thể hơn là lấy thông tin từ input)
 function getFormData(formEL) {
@@ -31,16 +20,6 @@ function getFormData(formEL) {
     }
   }
   return data;
-}
-
-// Lưu dữ liệu lên hệ thống
-function saveDataToLocal(key, data) {
-  localStorage.setItem(key, JSON.stringify(data));
-}
-
-function getUserLoginData() {
-  let userData = JSON.parse(localStorage.getItem("userLogin"));
-  return userData;
 }
 
 function validateEmail(email) {
